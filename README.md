@@ -20,7 +20,7 @@ A Jeopardy style game that can receive custom questions and responses.
 # Useful Websites
 
 {Make a list of websites that you found helpful in this project}
-* [Web Site Name](http://url.link.goes.here)
+* [Django Site](https://www.djangoproject.com/start/)
 * [Web Site Name](http://url.link.goes.here)
 
 # Future Work
