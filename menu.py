@@ -2,6 +2,7 @@ import arcade
 from tkinter.filedialog import askopenfilename
 from tkinter.simpledialog import askinteger
 from tkinter import messagebox
+from tkinter import Tk
 
 from board import Board
 from buttons import Button
@@ -22,6 +23,7 @@ class PlayGameButton(Button):
 
     def on_click(self):
         try:
+            Tk().withdraw()
             question_file_path = askopenfilename(title="Select Question File", filetypes=[("Question Files","*.txt")])
             if (question_file_path != ""):
                 num_teams = askinteger(title='Number of Teams', prompt=f'Please enter the number of teams ({MIN_NUM_TEAMS}-{MAX_NUM_TEAMS})', initialvalue=2, minvalue=MIN_NUM_TEAMS, maxvalue=MAX_NUM_TEAMS)
