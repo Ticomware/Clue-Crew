@@ -1,8 +1,13 @@
 import arcade
-from pip import main
-from board import BOX_HEIGHT, Board
+from tkinter.filedialog import askopenfilename
+from tkinter.simpledialog import askinteger
+from tkinter import messagebox
+
+from board import Board
 from buttons import Button
-from constants import BOX_PADDING, MAIN_TITLE, MAIN_TITLE_COLOR, BACKGROUND_COLOR, WINDOW_HEIGHT, WINDOW_WIDTH
+from constants import BOX_PADDING, MAIN_TITLE, MAIN_TITLE_COLOR, BACKGROUND_COLOR, MAX_NUM_TEAMS, MIN_NUM_TEAMS, WINDOW_HEIGHT, WINDOW_WIDTH
+from board import InvalidQuestionFile
+
 
 BUTTON_WIDTH = 100
 BUTTON_HEIGHT = 75
@@ -16,8 +21,15 @@ class PlayGameButton(Button):
         self.main_menu_view = main_menu_view
 
     def on_click(self):
-        board_view = Board(self.main_menu_view)
-        arcade.get_window().show_view(board_view)
+        try:
+            question_file_path = askopenfilename(title="Select Question File", filetypes=[("Question Files","*.txt")])
+            if (question_file_path != ""):
+                num_teams = askinteger(title='Number of Teams', prompt=f'Please enter the number of teams ({MIN_NUM_TEAMS}-{MAX_NUM_TEAMS})', initialvalue=2, minvalue=MIN_NUM_TEAMS, maxvalue=MAX_NUM_TEAMS)
+                if(num_teams != None):
+                    board_view = Board(question_file_path, num_teams, self.main_menu_view)
+                    board_view.window.show_view(board_view)
+        except InvalidQuestionFile as e:
+            messagebox.showerror(title="Invalid Question File", message=e.message)
 
 class ExitButton(Button):
     def __init__(self, x, y, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, color=BUTTON_COLOR, text_color=BUTTON_TEXT_COLOR, font_size=BUTTON_FONT_SIZE):
@@ -32,7 +44,7 @@ class Menu(arcade.View):
         arcade.set_background_color(BACKGROUND_COLOR)
 
         self.buttons = [PlayGameButton(WINDOW_WIDTH / 2, (WINDOW_HEIGHT + BOX_PADDING + BUTTON_HEIGHT)/2, self), ExitButton(WINDOW_WIDTH / 2, (WINDOW_HEIGHT - BOX_PADDING - BUTTON_HEIGHT) / 2)]
-    
+
     def on_draw(self):
         arcade.start_render()
 

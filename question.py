@@ -49,6 +49,6 @@ class QuestionView(arcade.View):
                 selection = box.on_click()
                 if (self.question.check_correct(selection)):
                     self.answering_team.score += self.question.points
-                self.board_view.switch_teams()
                 self.window.show_view(self.board_view)
-            
+                self.board_view.switch_teams()
+                self.board_view.check_game_over()
