@@ -1,56 +1,101 @@
 import arcade
 from tkinter.filedialog import askopenfilename
-from tkinter.simpledialog import askinteger
 from tkinter import messagebox
 from tkinter import Tk
 
 from board import Board
-from buttons import Button
-from constants import BOX_PADDING, MAIN_TITLE, MAIN_TITLE_COLOR, BACKGROUND_COLOR, MAX_NUM_TEAMS, MIN_NUM_TEAMS, WINDOW_HEIGHT, WINDOW_WIDTH
+from buttons import Box, ExitButton, FunctionButton, ViewButton
+from constants import BOX_PADDING, DEFAULT_BUTTON_HEIGHT, DEFAULT_BUTTON_WIDTH, MAIN_TITLE, MAIN_TITLE_COLOR, BACKGROUND_COLOR, MAX_NUM_TEAMS, MIN_NUM_TEAMS, WINDOW_HEIGHT, WINDOW_WIDTH, MESSAGE_BOX_HEIGHT
 from board import InvalidQuestionFile
+from question import BUTTON_HEIGHT
 
-
-BUTTON_WIDTH = 100
-BUTTON_HEIGHT = 75
+BUTTON_WIDTH = DEFAULT_BUTTON_WIDTH
+BUTTON_HEIGHT = DEFAULT_BUTTON_HEIGHT
 BUTTON_COLOR = arcade.color.GREEN
 BUTTON_TEXT_COLOR = arcade.color.PURPLE
 BUTTON_FONT_SIZE = 10
 
-class PlayGameButton(Button):
-    def __init__(self, x, y, main_menu_view, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, color=BUTTON_COLOR, text_color=BUTTON_TEXT_COLOR, font_size=BUTTON_FONT_SIZE):
-        super().__init__("Play Game", x, y, width=width, height=height, color=color, text_color=text_color, font_size=font_size)
+TEAM_CHOICE_HEIGHT = 75
+TEAM_CHOICE_WIDTH = 225
+
+
+class SelectTeamsView(arcade.View):
+    def __init__(self, question_file_path, main_menu_view):
+        super().__init__()
+        self.question_file_path = question_file_path
         self.main_menu_view = main_menu_view
+        self.teams_boxes = self.setup_boxes()
+        cancel_button = ViewButton(main_menu_view, 'Cancel', WINDOW_WIDTH/2, (WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT - TEAM_CHOICE_HEIGHT /
+                                   2 - BOX_PADDING) - (TEAM_CHOICE_HEIGHT + BOX_PADDING)*(MAX_NUM_TEAMS - MIN_NUM_TEAMS + 1), TEAM_CHOICE_WIDTH, TEAM_CHOICE_HEIGHT)
+        self.buttons = [cancel_button]
 
-    def on_click(self):
-        try:
-            Tk().withdraw()
-            question_file_path = askopenfilename(title="Select Question File", filetypes=[("Question Files","*.txt")])
-            if (question_file_path != ""):
-                num_teams = askinteger(title='Number of Teams', prompt=f'Please enter the number of teams ({MIN_NUM_TEAMS}-{MAX_NUM_TEAMS})', initialvalue=2, minvalue=MIN_NUM_TEAMS, maxvalue=MAX_NUM_TEAMS)
-                if(num_teams != None):
-                    board_view = Board(question_file_path, num_teams, self.main_menu_view)
-                    board_view.window.show_view(board_view)
-        except InvalidQuestionFile as e:
-            messagebox.showerror(title="Invalid Question File", message=e.message)
+    def setup_boxes(self):
+        x = WINDOW_WIDTH / 2
+        y = WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT - TEAM_CHOICE_HEIGHT / 2 - BOX_PADDING
+        teams_boxes = []
+        for i in range(MIN_NUM_TEAMS, MAX_NUM_TEAMS + 1):
+            teams_box = Box(i, f'{i} Teams', x, y, width=TEAM_CHOICE_WIDTH,
+                            height=TEAM_CHOICE_HEIGHT, font_size=10)
+            teams_boxes.append(teams_box)
+            y -= TEAM_CHOICE_HEIGHT + BOX_PADDING
+        return teams_boxes
 
-class ExitButton(Button):
-    def __init__(self, x, y, width=BUTTON_WIDTH, height=BUTTON_HEIGHT, color=BUTTON_COLOR, text_color=BUTTON_TEXT_COLOR, font_size=BUTTON_FONT_SIZE):
-        super().__init__("Exit", x, y, width=width, height=height, color=color, text_color=text_color, font_size=font_size)
-    
-    def on_click(self):
-        arcade.close_window()
+    def on_draw(self):
+        arcade.start_render()
+        for box in self.teams_boxes:
+            box.draw()
+
+        for button in self.buttons:
+            button.draw()
+
+    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        for box in self.teams_boxes:
+            if box.hovered:
+                num_teams = box.on_click()
+                board_view = Board(self.question_file_path,
+                                   num_teams, self.main_menu_view)
+                board_view.window.show_view(board_view)
+
+        for button in self.buttons:
+            if button.hovered:
+                button.on_click()
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        for box in self.teams_boxes:
+            box.check_hovered(x, y)
+
+        for button in self.buttons:
+            button.check_hovered(x, y)
+
 
 class Menu(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(BACKGROUND_COLOR)
+        play_game_button = FunctionButton(self.begin_game, "Play Game", WINDOW_WIDTH / 2,
+                                          (WINDOW_HEIGHT + BOX_PADDING + BUTTON_HEIGHT)/2, BUTTON_WIDTH, BUTTON_HEIGHT)
+        exit_button = ExitButton(WINDOW_WIDTH / 2, (WINDOW_HEIGHT -
+                                 BOX_PADDING - BUTTON_HEIGHT) / 2, BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.buttons = [play_game_button, exit_button]
 
-        self.buttons = [PlayGameButton(WINDOW_WIDTH / 2, (WINDOW_HEIGHT + BOX_PADDING + BUTTON_HEIGHT)/2, self), ExitButton(WINDOW_WIDTH / 2, (WINDOW_HEIGHT - BOX_PADDING - BUTTON_HEIGHT) / 2)]
+    def begin_game(self):
+        try:
+            Tk().withdraw()
+            question_file_path = askopenfilename(title="Select Question File", filetypes=[
+                                                 ("Question Files", "*.txt")])
+            if (question_file_path != ""):
+                select_teams_view = SelectTeamsView(question_file_path, self)
+                arcade.get_window().show_view(select_teams_view)
+
+        except InvalidQuestionFile as e:
+            messagebox.showerror(
+                title="Invalid Question File", message=e.message)
 
     def on_draw(self):
         arcade.start_render()
 
-        arcade.draw_text(MAIN_TITLE, self.window.width // 2, self.window.height - 75, color=MAIN_TITLE_COLOR, font_size=50, anchor_x="center")
+        arcade.draw_text(MAIN_TITLE, self.window.width // 2, self.window.height -
+                         75, color=MAIN_TITLE_COLOR, font_size=50, anchor_x="center")
 
         for button in self.buttons:
             button.draw()
@@ -58,7 +103,7 @@ class Menu(arcade.View):
     def on_mouse_motion(self, x, y, dx, dy):
         for button in self.buttons:
             button.check_hovered(x, y)
-    
+
     def on_mouse_release(self, x, y, dx, dy):
         for button in self.buttons:
             if button.hovered:
