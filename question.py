@@ -16,7 +16,7 @@ class Question:
 
 
 class QuestionView(arcade.View):
-    def __init__(self, question, board_view=None):
+    def __init__(self, question, board_view):
         super().__init__()
         self.board_view = board_view
         self.question = question
