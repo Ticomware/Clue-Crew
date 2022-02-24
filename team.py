@@ -1,6 +1,3 @@
-from unicodedata import name
-
-
 class Team:
     def __init__(self, name):
         self.name = name
