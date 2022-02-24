@@ -71,6 +71,7 @@ class QuestionView(arcade.View):
                 team_correct = box.on_click()
                 if team_correct is not None:
                     team_correct.score += self.question.points
+                self.board_view.update_team_display()
                 self.window.show_view(self.board_view)
                 self.board_view.check_game_over()
 

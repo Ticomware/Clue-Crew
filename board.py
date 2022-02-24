@@ -11,6 +11,9 @@ BOX_TEXT_COLOR = arcade.color.PURPLE
 QUIT_BUTTON_WIDTH = 50
 QUIT_BUTTON_HEIGHT = 35
 
+TEAM_DISPLAY_FONT_COLOR = arcade.color.ANTIQUE_WHITE
+TEAM_DISPLAY_FONT_SIZE = 15
+CATEGORY_FONT_COLOR = arcade.color.ANTIQUE_WHITE
 
 class InvalidQuestionFile(Exception):
     def __init__(self, message) -> None:
@@ -20,15 +23,18 @@ class InvalidQuestionFile(Exception):
     def __str__(self) -> str:
         return f"INVALID QUESTION FILE: {self.message}"
 
-
 class Board(arcade.View):
     def __init__(self, question_file_path, num_teams, main_menu_view):
         super().__init__()
         self.teams = [Team(f"Team {i+1}") for i in range(num_teams)]
+        self.team_display = arcade.Text('', WINDOW_WIDTH / 2, TEAM_DISPLAY_HEIGHT / 2, color=TEAM_DISPLAY_FONT_COLOR, font_size=TEAM_DISPLAY_FONT_SIZE, anchor_x="center", anchor_y="center")
         self.main_menu_view = main_menu_view
-        self.categories = []
+        self.message_display = arcade.Text(f"Please select a question...", WINDOW_WIDTH / 2, WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", font_size=20)
+        self.category_labels = []
         self.question_boxes = []
         self.setup_boxes(question_file_path)
+        self.update_team_display()
+
         self.window.show_view(main_menu_view)
         quit_button = ViewButton(main_menu_view, 'Quit', WINDOW_WIDTH - QUIT_BUTTON_WIDTH / 2 - BOX_PADDING,
                                  WINDOW_HEIGHT - QUIT_BUTTON_HEIGHT / 2 - BOX_PADDING, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT)
@@ -51,15 +57,16 @@ class Board(arcade.View):
         BOX_WIDTH = (WINDOW_WIDTH - BOX_PADDING *
                      (num_categories + 1)) / num_categories
         BOX_HEIGHT = (WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT - TEAM_DISPLAY_HEIGHT -
-                      (BOX_PADDING * num_questions + 2)) / num_questions
+                      (BOX_PADDING * num_questions + 2)) / (num_questions + 0.5)
+        CATEGORY_HEIGHT = BOX_HEIGHT / 2
         x = BOX_WIDTH / 2 + BOX_PADDING
-        y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT
+        y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT - CATEGORY_HEIGHT
+        category_y = WINDOW_HEIGHT - BOX_PADDING - MESSAGE_BOX_HEIGHT
+        CATEGORY_FONT_SIZE = BOX_WIDTH // 15
         points = 100
 
         for category_num in range(num_categories):
-            if file_parser.get_line_indicator() == "C":
-                category = file_parser.parse_line()
-                self.categories.append(f'Category {category_num + 1}')
+            self.category_labels.append(arcade.Text(f'Category Category Category Category {category_num + 1}', x, category_y, color=CATEGORY_FONT_COLOR, font_size=CATEGORY_FONT_SIZE, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True))
 
             for question_num in range(num_questions):
                 question = Question(
@@ -70,8 +77,11 @@ class Board(arcade.View):
                 y -= box.height + BOX_PADDING
                 points += 100
             x += box.width + BOX_PADDING
-            y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT
+            y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT - CATEGORY_HEIGHT
             points = 100
+
+    def update_team_display(self):
+        self.team_display.value = '     '.join([f"{team.name}: {team.score:<5g}" for team in self.teams])
 
     def check_game_over(self):
         if (len(self.question_boxes) == 0):
@@ -79,8 +89,10 @@ class Board(arcade.View):
             self.window.show_view(gameOverView)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        all_buttons = self.buttons + self.question_boxes
-        for button in all_buttons:
+        for box in self.question_boxes:
+            box.check_hovered(x, y)
+
+        for button in self.buttons:
             button.check_hovered(x, y)
 
     def on_mouse_release(self, x, y, button, modifiers):
@@ -100,16 +112,17 @@ class Board(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text(f"Please select a question...", WINDOW_WIDTH / 2, WINDOW_HEIGHT -
-                         MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", font_size=20)
+        
+        self.message_display.draw()
+
+        for category in self.category_labels:
+            category.draw()
+
         all_buttons = self.buttons + self.question_boxes
         for button in all_buttons:
             button.draw()
 
-        team_display_string = '     '.join(
-            [f"{team.name}: {team.score:<5g}" for team in self.teams])
-        arcade.draw_text(team_display_string, WINDOW_WIDTH / 2, TEAM_DISPLAY_HEIGHT /
-                         2, font_size=15, anchor_x="center", anchor_y="center")
+        self.team_display.draw()
 
 
 class GameOver(arcade.View):
