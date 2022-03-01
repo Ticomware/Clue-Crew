@@ -105,6 +105,12 @@ class Menu(arcade.View):
             button.check_hovered(x, y)
 
     def on_mouse_release(self, x, y, dx, dy):
+        button_clicked = False
         for button in self.buttons:
-            if button.hovered:
+            if button.hovered and not button_clicked:
                 button.on_click()
+                button_clicked = True
+
+    def on_hide_view(self):
+        for button in self.buttons:
+            button.hovered = False
