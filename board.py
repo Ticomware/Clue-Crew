@@ -1,9 +1,12 @@
 import arcade
-from buttons import Box, ViewButton
+from buttons import Box, FunctionButton, ViewButton
 from file_parser import FileParser
 from question import Question, QuestionView
 from team import Team
 from constants import WINDOW_HEIGHT, WINDOW_WIDTH, BOX_PADDING, DEFAULT_BUTTON_HEIGHT, DEFAULT_BUTTON_WIDTH, MESSAGE_BOX_HEIGHT, TEAM_DISPLAY_HEIGHT
+from tkinter.messagebox import askyesnocancel
+from tkinter.filedialog import asksaveasfile
+import pickle
 
 BOX_COLOR = arcade.color.GREEN
 BOX_TEXT_COLOR = arcade.color.PURPLE
@@ -24,19 +27,35 @@ class InvalidQuestionFile(Exception):
         return f"INVALID QUESTION FILE: {self.message}"
 
 class Board(arcade.View):
-    def __init__(self, question_file_path, num_teams, main_menu_view):
+    @classmethod
+    def load_from_saved_board_file(self, saved_board_file, main_menu_view):
+        saved_board_dictionary = pickle.load(saved_board_file)
+        saved_board = Board(main_menu_view=main_menu_view)
+        saved_board.question_boxes = saved_board_dictionary['question_boxes']
+        
+        BOX_WIDTH = saved_board.question_boxes[0].width
+        CATEGORY_FONT_SIZE = BOX_WIDTH // 15
+        saved_board.category_labels = [arcade.Text(**category, color=CATEGORY_FONT_COLOR, font_size=CATEGORY_FONT_SIZE, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True) for category in saved_board_dictionary['categories']]
+        saved_board.teams = saved_board_dictionary['teams']
+        return saved_board
+
+    def __init__(self, question_file_path=None, num_teams=None, main_menu_view=None):
         super().__init__()
-        self.teams = [Team(f"Team {i+1}") for i in range(num_teams)]
-        self.team_display = arcade.Text('', WINDOW_WIDTH / 2, TEAM_DISPLAY_HEIGHT / 2, color=TEAM_DISPLAY_FONT_COLOR, font_size=TEAM_DISPLAY_FONT_SIZE, anchor_x="center", anchor_y="center")
-        self.main_menu_view = main_menu_view
-        self.message_display = arcade.Text(f"Please select a question...", WINDOW_WIDTH / 2, WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", font_size=20)
+        self.teams = []
+        self.main_menu_view = None
         self.category_labels = []
         self.question_boxes = []
-        self.setup_boxes(question_file_path)
-        self.update_team_display()
+        self.team_display = arcade.Text('', WINDOW_WIDTH / 2, TEAM_DISPLAY_HEIGHT / 2, color=TEAM_DISPLAY_FONT_COLOR, font_size=TEAM_DISPLAY_FONT_SIZE, anchor_x="center", anchor_y="center")
+        self.message_display = arcade.Text(f"Please select a question...", WINDOW_WIDTH / 2, WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", font_size=20)
+        
+        if num_teams:
+            self.teams = [Team(f"Team {i+1}") for i in range(num_teams)]        
+        if main_menu_view:
+            self.main_menu_view = main_menu_view
+        if question_file_path:
+            self.setup_boxes(question_file_path)
 
-        self.window.show_view(main_menu_view)
-        quit_button = ViewButton(main_menu_view, 'Quit', WINDOW_WIDTH - QUIT_BUTTON_WIDTH / 2 - BOX_PADDING,
+        quit_button = FunctionButton(self.quit, 'Quit', WINDOW_WIDTH - QUIT_BUTTON_WIDTH / 2 - BOX_PADDING,
                                  WINDOW_HEIGHT - QUIT_BUTTON_HEIGHT / 2 - BOX_PADDING, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT)
         self.buttons = [quit_button]
 
@@ -96,13 +115,16 @@ class Board(arcade.View):
             button.check_hovered(x, y)
 
     def on_mouse_release(self, x, y, button, modifiers):
+        button_clicked = False
         for button in self.buttons:
-            if button.hovered:
+            if button.hovered and not button_clicked:
                 button.on_click()
+                button_clicked = True
 
         for box in self.question_boxes:
-            if box.hovered:
+            if box.hovered and not button_clicked:
                 question = box.on_click()
+                button_clicked = True
                 self.question_boxes.remove(box)
                 self.ask_question(question)
 
@@ -123,6 +145,27 @@ class Board(arcade.View):
             button.draw()
 
         self.team_display.draw()
+    
+    def on_show_view(self):
+        self.update_team_display()
+
+    def quit(self):
+        should_save_before_quit = askyesnocancel(title='Save Before Quit?', message='Would you like to save the board before quitting?')
+        if should_save_before_quit is not None:
+            if should_save_before_quit:
+                filetypes = [('Jeopardy Board', '*.jpd')]
+                file = asksaveasfile(mode='wb', filetypes=filetypes, defaultextension=filetypes, initialdir='./Saved Boards/')
+                if file is not None:
+                    board_dictionary = {
+                    'teams': self.teams,
+                    'categories': [{'text':category_label.value, 'start_x': category_label.x, 'start_y': category_label.y, } for category_label in self.category_labels],
+                    'question_boxes': self.question_boxes
+                    }
+                    pickle.dump(board_dictionary, file)
+                    self.window.show_view(self.main_menu_view)
+            else:
+                self.window.show_view(self.main_menu_view)
+                
 
 
 class GameOver(arcade.View):
