@@ -166,7 +166,8 @@ class NewBoard(tk.Frame):
         #DISABLE widget
         self.st.config(state='disabled')
 
-
+    def pushServer(self):
+        pass
 
 class EditBoard(tk.Frame):
 
