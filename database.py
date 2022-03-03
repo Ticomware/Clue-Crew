@@ -1,7 +1,5 @@
 import xml.etree.ElementTree as ElementTree
 
-from html2text import element_style
-
 class question:
     def __init__(self, question, answer, pointValue, isDouble = False):
         self.question = question
