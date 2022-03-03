@@ -46,7 +46,7 @@ class database:
         return self.categories
     
     def save(self, fileLocation = None):
-        '''if fileLocation == None:
+        if fileLocation == None:
             fileLocation = self.xmlFilePath
 
         self.root.set('background', self.backgroundColor)
@@ -57,16 +57,19 @@ class database:
             self.root.remove(cat)
         
         for cat in self.categories:
-            catItem = ElementTree.Element('category')
+            catItem = ElementTree.SubElement(self.root, 'category')
             catItem.set('title', cat.title)
             for q in cat.questions:
                 questionElement = ElementTree.SubElement(catItem, 'question')
-                titleElement = ElementTree.SubElement(catItem, 'question')
+                titleElement = ElementTree.SubElement(questionElement, 'title')
+                titleElement.text = q.question
+                answerElement = ElementTree.SubElement(questionElement, 'answer')
+                answerElement.text = q.answer
+                questionElement.set('points', q.pointValue)
+                if q.isDouble:
+                    questionElement.set('dailyDouble', 'True')
 
-
-
-        self.tree.write(fileLocation)'''
-        raise NotImplementedError
+        self.tree.write(fileLocation)
 
     def getBackgroundColor(self):
         return self.backgroundColor
