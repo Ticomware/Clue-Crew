@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ElementTree
 
+from html2text import element_style
+
 class question:
     def __init__(self, question, answer, pointValue, isDouble = False):
         self.question = question
@@ -20,14 +22,14 @@ class database:
         self.foregroundColor = ""
         self.pointColor = ""
 
-        tree = ElementTree.parse(self.xmlFilePath)
-        root = tree.getroot()
-        if root.tag == 'board':
-            self.backgroundColor = root.get('background', self.backgroundColor)
-            self.foregroundColor = root.get('foreground', self.foregroundColor)
-            self.pointColor = root.get('pointcolor', self.pointColor)
+        self.tree = ElementTree.parse(self.xmlFilePath)
+        self.root = self.tree.getroot()
+        if self.root.tag == 'board':
+            self.backgroundColor = self.root.get('background', self.backgroundColor)
+            self.foregroundColor = self.root.get('foreground', self.foregroundColor)
+            self.pointColor = self.root.get('pointcolor', self.pointColor)
 
-            for cat in root:
+            for cat in self.root:
                 if cat.tag == "category":
                     questionList = []
                     categoryTitle = cat.get('title', 'Invalid')
@@ -45,7 +47,27 @@ class database:
     def getBoard(self):
         return self.categories
     
-    def save(self):
+    def save(self, fileLocation = None):
+        '''if fileLocation == None:
+            fileLocation = self.xmlFilePath
+
+        self.root.set('background', self.backgroundColor)
+        self.root.set('foreground', self.foregroundColor)
+        self.root.set('pointcolor', self.pointColor)
+
+        for cat in self.root.findall('category'):
+            self.root.remove(cat)
+        
+        for cat in self.categories:
+            catItem = ElementTree.Element('category')
+            catItem.set('title', cat.title)
+            for q in cat.questions:
+                questionElement = ElementTree.SubElement(catItem, 'question')
+                titleElement = ElementTree.SubElement(catItem, 'question')
+
+
+
+        self.tree.write(fileLocation)'''
         raise NotImplementedError
 
     def getBackgroundColor(self):
