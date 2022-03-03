@@ -145,8 +145,9 @@ class NewBoard(tk.Frame):
                     self.newBoardData.append(newData)
                 
             #update list into scrollview
-            print(self.newBoardData)
+            #print(self.newBoardData)
             self.updateScrollView()
+            self.pushServer()
 
         else:
             messagebox.showerror('Error','Category/Questions/Answer cannot be empty!')
@@ -167,7 +168,10 @@ class NewBoard(tk.Frame):
         self.st.config(state='disabled')
 
     def pushServer(self):
-        pass
+        # loop through list
+        for r in self.newBoardData:
+            for c in r:
+                print(c, end=' ')
 
 class EditBoard(tk.Frame):
 
