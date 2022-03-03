@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
-<board background="" foreground="" pointcolor="">
+<board background="#031f60" foreground="#ffffff" pointcolor="#f9be10">
     <category title="Technology">
         <question points="200">
             <title>Apple created the iPhone. ___ created Android.</title>
@@ -11,8 +10,8 @@
             <answer>Bill Gates</answer>
         </question>
         <question points="600">
-            <title>question</title>
-            <answer>answer</answer>
+            <title>This former executive is known for shouting "Developers, Developers, Developers!"</title>
+            <answer>Steve Ballmer</answer>
         </question>
         <question points="800">
             <title>question</title>
@@ -58,7 +57,7 @@
             <title>Doc brown sourced uranium from a group of terrorists from this country</title>
             <answer>Libya</answer>
         </question>
-        <question points="800" double>
+        <question points="800" dailyDouble="True">
             <title>Doc Brown's dog in 1985 was named Einstien, but in 1955 his dog's name was</title>
             <answer>Copernicus</answer>
         </question>
