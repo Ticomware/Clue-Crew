@@ -72,11 +72,19 @@ class Menu(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(BACKGROUND_COLOR)
-        play_game_button = FunctionButton(self.begin_game, "Play Game", WINDOW_WIDTH / 2,
-                                          (WINDOW_HEIGHT + BOX_PADDING + BUTTON_HEIGHT)/2, BUTTON_WIDTH, BUTTON_HEIGHT)
-        exit_button = ExitButton(WINDOW_WIDTH / 2, (WINDOW_HEIGHT -
-                                 BOX_PADDING - BUTTON_HEIGHT) / 2, BUTTON_WIDTH, BUTTON_HEIGHT)
-        self.buttons = [play_game_button, exit_button]
+
+        play_game_button = FunctionButton(self.begin_game, "Play Game", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + BUTTON_HEIGHT + BOX_PADDING, BUTTON_WIDTH, BUTTON_HEIGHT)
+        load_game_button = FunctionButton(self.load_game, "Load Game", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT)
+        exit_button = ExitButton(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - BOX_PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.buttons = [play_game_button, load_game_button, exit_button]
+
+    def load_game(self):
+        filetypes = [('Jeopardy Board', '*.jpd')]
+        file_name = askopenfilename(filetypes=filetypes, defaultextension=filetypes, initialdir='./Saved Boards')
+        if file_name:
+            file = open(file_name, 'rb')
+            board_view = Board.load_from_saved_board_file(file, self)
+            self.window.show_view(board_view)
 
     def begin_game(self):
         try:
@@ -105,6 +113,12 @@ class Menu(arcade.View):
             button.check_hovered(x, y)
 
     def on_mouse_release(self, x, y, dx, dy):
+        button_clicked = False
         for button in self.buttons:
-            if button.hovered:
+            if button.hovered and not button_clicked:
                 button.on_click()
+                button_clicked = True
+
+    def on_hide_view(self):
+        for button in self.buttons:
+            button.hovered = False
