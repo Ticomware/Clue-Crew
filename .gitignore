@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 #Rodrigo's
-.test.py
+test.py
