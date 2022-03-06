@@ -6,6 +6,7 @@ from team import Team
 from constants import WINDOW_HEIGHT, WINDOW_WIDTH, BOX_PADDING, DEFAULT_BUTTON_HEIGHT, DEFAULT_BUTTON_WIDTH, MESSAGE_BOX_HEIGHT, TEAM_DISPLAY_HEIGHT
 from tkinter.messagebox import askyesnocancel
 from tkinter.filedialog import asksaveasfile
+from database import database
 import pickle
 
 BOX_COLOR = arcade.color.GREEN
@@ -60,18 +61,12 @@ class Board(arcade.View):
         self.buttons = [quit_button]
 
     def setup_boxes(self, question_file_path):
-        file_parser = FileParser(question_file_path)
-        if file_parser.get_line_indicator() == "NUM_CATEGORIES":
-            num_categories = int(file_parser.parse_line())
-        else:
-            raise InvalidQuestionFile(
-                "Missing NUM_CATEGORIES, indicating the number of categories for this board...")
+        board_data = database(question_file_path)
 
-        if file_parser.get_line_indicator() == "NUM_QUESTIONS_PER_CATEGORY":
-            num_questions = int(file_parser.parse_line())
-        else:
-            raise InvalidQuestionFile(
-                "Missing NUM_QUESTIONS_PER_CATEGORY, indicating the number of questions for each category...")
+        categories = board_data.getBoard()
+        num_categories = len(categories)
+        num_questions = len(max(categories, key=lambda category: len(category.questions)).questions)
+
 
         BOX_WIDTH = (WINDOW_WIDTH - BOX_PADDING *
                      (num_categories + 1)) / num_categories
@@ -82,22 +77,18 @@ class Board(arcade.View):
         y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT - CATEGORY_HEIGHT
         category_y = WINDOW_HEIGHT - BOX_PADDING - MESSAGE_BOX_HEIGHT
         CATEGORY_FONT_SIZE = BOX_WIDTH // 15
-        points = 100
 
-        for category_num in range(num_categories):
-            self.category_labels.append(arcade.Text(f'Category Category Category Category {category_num + 1}', x, category_y, color=CATEGORY_FONT_COLOR, font_size=CATEGORY_FONT_SIZE, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True))
+        for category in categories:
+            self.category_labels.append(arcade.Text(category.title, x, category_y, color=CATEGORY_FONT_COLOR, font_size=CATEGORY_FONT_SIZE, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True))
 
-            for question_num in range(num_questions):
-                question = Question(
-                    f'Question {question_num + 1}', f'Answer for question {question_num + 1}', points)
-                box = Box(question, str(points), x, y,
+            for question in category.questions:
+                question.pointValue = int(question.pointValue)
+                box = Box(question, str(question.pointValue), x, y,
                           width=BOX_WIDTH, height=BOX_HEIGHT)
                 self.question_boxes.append(box)
                 y -= box.height + BOX_PADDING
-                points += 100
             x += box.width + BOX_PADDING
             y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT - CATEGORY_HEIGHT
-            points = 100
 
     def update_team_display(self):
         self.team_display.value = '     '.join([f"{team.name}: {team.score:<5g}" for team in self.teams])

@@ -41,14 +41,14 @@ class QuestionView(arcade.View):
         return teams_boxes
 
     def show_answer(self):
-        self.answer_string = f'Answer: {self.question.answer_text}'
+        self.answer_string = f'Answer: {self.question.answer}'
         self.teams_boxes = self.setup_teams_boxes()
         self.buttons = []
 
     def on_draw(self):
         arcade.start_render()
 
-        arcade.draw_text(self.question.question_text, WINDOW_WIDTH / 2, WINDOW_HEIGHT -
+        arcade.draw_text(self.question.question, WINDOW_WIDTH / 2, WINDOW_HEIGHT -
                          MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", font_size=20)
         arcade.draw_text(self.answer_string, WINDOW_WIDTH / 2, WINDOW_HEIGHT -
                          MESSAGE_BOX_HEIGHT / 2 - 50, anchor_x="center", anchor_y="center", font_size=20)
@@ -70,7 +70,7 @@ class QuestionView(arcade.View):
             if box.hovered:
                 team_correct = box.on_click()
                 if team_correct is not None:
-                    team_correct.score += self.question.points
+                    team_correct.score += self.question.pointValue
                 self.board_view.update_team_display()
                 self.window.show_view(self.board_view)
                 self.board_view.check_game_over()
