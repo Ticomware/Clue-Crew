@@ -20,7 +20,10 @@ class QuestionView(arcade.View):
         super().__init__()
         self.board_view = board_view
         self.question = question
-        self.answer_string = ''
+
+        self.question_text = arcade.Text(self.question.question, WINDOW_WIDTH / 2, WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", align='center', font_size=15, width=WINDOW_WIDTH - 2 * BOX_PADDING, multiline=True)
+        self.answer_text = arcade.Text('', WINDOW_WIDTH / 2, WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT / 2 - 75, anchor_x="center", anchor_y="center", align='center', font_size=15, width=WINDOW_WIDTH - 2 * BOX_PADDING, multiline=True)
+
         self.teams_boxes = []
         show_answer_button = FunctionButton(
             self.show_answer, 'Show Answer', WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -41,17 +44,16 @@ class QuestionView(arcade.View):
         return teams_boxes
 
     def show_answer(self):
-        self.answer_string = f'Answer: {self.question.answer}'
+        self.answer_text.value = f'Answer: {self.question.answer}'
         self.teams_boxes = self.setup_teams_boxes()
         self.buttons = []
 
     def on_draw(self):
         arcade.start_render()
 
-        arcade.draw_text(self.question.question, WINDOW_WIDTH / 2, WINDOW_HEIGHT -
-                         MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", font_size=20)
-        arcade.draw_text(self.answer_string, WINDOW_WIDTH / 2, WINDOW_HEIGHT -
-                         MESSAGE_BOX_HEIGHT / 2 - 50, anchor_x="center", anchor_y="center", font_size=20)
+        self.question_text.draw()
+        self.answer_text.draw()
+
         for box in self.teams_boxes:
             box.draw()
 
