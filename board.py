@@ -17,6 +17,7 @@ QUIT_BUTTON_HEIGHT = 35
 
 TEAM_DISPLAY_FONT_COLOR = arcade.color.ANTIQUE_WHITE
 TEAM_DISPLAY_FONT_SIZE = 15
+CATEGORY_FONT_SIZE_SCALE = 12
 CATEGORY_FONT_COLOR = arcade.color.ANTIQUE_WHITE
 
 class InvalidQuestionFile(Exception):
@@ -35,8 +36,7 @@ class Board(arcade.View):
         saved_board.question_boxes = saved_board_dictionary['question_boxes']
         
         BOX_WIDTH = saved_board.question_boxes[0].width
-        CATEGORY_FONT_SIZE = BOX_WIDTH // 15
-        saved_board.category_labels = [arcade.Text(**category, color=CATEGORY_FONT_COLOR, font_size=CATEGORY_FONT_SIZE, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True) for category in saved_board_dictionary['categories']]
+        saved_board.category_labels = [arcade.Text(**category, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True) for category in saved_board_dictionary['categories']]
         saved_board.teams = saved_board_dictionary['teams']
         return saved_board
 
@@ -74,9 +74,9 @@ class Board(arcade.View):
                       (BOX_PADDING * num_questions + 2)) / (num_questions + 0.5)
         CATEGORY_HEIGHT = BOX_HEIGHT / 2
         x = BOX_WIDTH / 2 + BOX_PADDING
-        y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT - CATEGORY_HEIGHT
+        y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT - CATEGORY_HEIGHT - BOX_PADDING
         category_y = WINDOW_HEIGHT - BOX_PADDING - MESSAGE_BOX_HEIGHT
-        CATEGORY_FONT_SIZE = BOX_WIDTH // 15
+        CATEGORY_FONT_SIZE = BOX_WIDTH // CATEGORY_FONT_SIZE_SCALE
 
         for category in categories:
             self.category_labels.append(arcade.Text(category.title, x, category_y, color=CATEGORY_FONT_COLOR, font_size=CATEGORY_FONT_SIZE, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True))
@@ -88,7 +88,7 @@ class Board(arcade.View):
                 self.question_boxes.append(box)
                 y -= box.height + BOX_PADDING
             x += box.width + BOX_PADDING
-            y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT - CATEGORY_HEIGHT
+            y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT - CATEGORY_HEIGHT - BOX_PADDING
 
     def update_team_display(self):
         self.team_display.value = '     '.join([f"{team.name}: {team.score:<5g}" for team in self.teams])
@@ -149,7 +149,7 @@ class Board(arcade.View):
                 if file is not None:
                     board_dictionary = {
                     'teams': self.teams,
-                    'categories': [{'text':category_label.value, 'start_x': category_label.x, 'start_y': category_label.y, } for category_label in self.category_labels],
+                    'categories': [{'text':category_label.value, 'start_x': category_label.x, 'start_y': category_label.y, 'font_size':category_label.font_size, 'color': category_label.color} for category_label in self.category_labels],
                     'question_boxes': self.question_boxes
                     }
                     pickle.dump(board_dictionary, file)
