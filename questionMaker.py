@@ -2,11 +2,14 @@ import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
 from tkinter import messagebox
 from tkinter import filedialog as fd
-from PIL import Image, ImageTk
+import database as db
+#from PIL import Image, ImageTk
+
 
 #--- SETTINGS ---
-WIDTH = 1100     #width of window
-HEIGHT = 900    #height of window
+SAVEFILE = 'rr-test.xml'    #default save file
+WIDTH = 1100                #width of window
+HEIGHT = 900                #height of window
 COLOR1 = '#5A78DB'
 COLOR2 = '#D1B18A'
 COLOR3 = '#12664F'
@@ -82,6 +85,8 @@ class NewBoard(tk.Frame):
     def __init__(self, parent, controller):
         #
         self.newBoardData = []
+        self.categories = []
+        self.questions = []
 
         tk.Frame.__init__(self, parent)
         #background
@@ -105,13 +110,30 @@ class NewBoard(tk.Frame):
         self.answer = tk.Entry(self, bd=3, font=FONT2)
         self.answer.place(relx=0.2, rely=0.32, relwidth=0.75)
 
+        #points
+        tk.Label(self, text='Points', background=COLOR1, font=FONT2, foreground='WHITE', wraplength=300, justify='center').place(relx=0.02, rely=0.42)
+        self.points = tk.Entry(self, bd=3, font=FONT2)
+        self.points.place(relx=0.2, rely=0.42, relwidth=0.15)
+        
+        #isDouble
+        self.doublePoints = tk.StringVar()
+        tk.Label(self, text='Double?', background=COLOR1, font=FONT2, foreground='WHITE', wraplength=300, justify='center').place(relx=0.45, rely=0.42)
+        yd = tk.Radiobutton(self, text='Yes', background=COLOR4, selectcolor=COLOR3,font=FONT2,foreground='WHITE', wraplength=300, justify='center', variable=self.doublePoints, value='y', indicator=0)
+        yd.place(relx=0.65, rely=0.42,relwidth=0.1)
+        nd = tk.Radiobutton(self, text='No', background=COLOR4, selectcolor=COLOR3, font=FONT2, foreground='WHITE', wraplength=300, justify='center', variable=self.doublePoints, value='n', indicator=0)
+        nd.place(relx=0.8, rely=0.42, relwidth=0.1)
+
         #scrollview with file
         self.st = ScrolledText(self, width=50, background=COLOR6, state='disabled', height=7,  font=('Bahnschrift', 20),foreground='black')
-        self.st.place(rely=0.45,relx=0.05,relwidth=0.9, relheight=0.35)
+        self.st.place(rely=0.48,relx=0.05,relwidth=0.9, relheight=0.35)
 
         #save question button
-        button = tk.Button(self, text="Save Question", background = COLOR2, font=FONT2, command=lambda: self.addQuestion())
+        button = tk.Button(self, text="Add Question", background = COLOR2, font=FONT2, command=lambda: self.addQuestion())
         button.place(relx=0.25,rely=0.85, relwidth=0.55)
+
+        #update database button
+        button = tk.Button(self, text="Save", background = COLOR2, font=FONT2, command=lambda: self.pushDatabase())
+        button.place(relx=0.06,rely=0.88, relwidth=0.15)
 
         #return home button
         button3 = tk.Button(self, text="⬅️  Back to Home", background = COLOR2, font=FONT2 ,command=lambda: controller.show_frame(StartPage))
@@ -122,14 +144,19 @@ class NewBoard(tk.Frame):
         category = self.category.get()
         question = self.question.get()
         answer = self.answer.get()
+        points = self.points.get()
+        isDouble = self.doublePoints.get()
 
         #validate input...
         if (category != '' and question != '' and answer != ''):
-            #Create a array
-            newData = [category, question, answer]
+            #Create an array
+            newData = [category, question, answer, points, isDouble]
             #if empty
             if (len(self.newBoardData) == 0):
+                #insert data into newBoardData
                 self.newBoardData.append(newData)
+                #add category to array
+                self.categories.append([category,1])
             #not empty
             else:
                 #assume newData does not exist
@@ -138,16 +165,26 @@ class NewBoard(tk.Frame):
                     #if same category and question -> replace answer and break
                     if (self.newBoardData[i][0] == newData[0] and self.newBoardData[i][1] == newData[1]):
                         self.newBoardData[i][2] = newData[2]
+                        self.newBoardData[i][3] = newData[3]
+                        self.newBoardData[i][4] = newData[4]
                         exists = True
                         break
                 #if newData does not exist, add it
                 if (exists == False):
                     self.newBoardData.append(newData)
+                    #update categories
+                    exists = False
+                    for i in range(len(self.categories)):
+                        if (self.categories[i][0] == category):
+                            self.categories[i][1] += 1
+                            exists = True
+                            break
+                    if (exists == False):
+                        self.categories.append([category,1])
                 
             #update list into scrollview
             #print(self.newBoardData)
             self.updateScrollView()
-            self.pushServer()
 
         else:
             messagebox.showerror('Error','Category/Questions/Answer cannot be empty!')
@@ -161,17 +198,39 @@ class NewBoard(tk.Frame):
 
         #INSERT contents into tkinter widget
         for i in range(len(self.newBoardData)):
-            data =  'Category: ' + self.newBoardData[i][0] + ' - Question: ' + self.newBoardData[i][1] + ' - Answer: ' + self.newBoardData[i][2] + '\n\n'
+            data =  'Category: ' + self.newBoardData[i][0] + ' - Question: ' + self.newBoardData[i][1] + ' - Answer: ' + self.newBoardData[i][2] + '(' + self.newBoardData[i][3] + ')' + '\n\n'
             self.st.insert(tk.END, data)
                 
         #DISABLE widget
         self.st.config(state='disabled')
 
-    def pushServer(self):
-        # loop through list
-        for r in self.newBoardData:
-            for c in r:
-                print(c, end=' ')
+    def pushDatabase(self):
+        #print(self.categories)
+        #call database - using existing file
+        database = db.database(SAVEFILE)
+        
+        #loop through categories
+        for c in range(len(self.categories)):
+            #empty list that holds db.question objects
+            self.questions = []
+            #print(self.categories[c][0])
+            for i in range(len(self.newBoardData)):
+                # 0 = category | 1 = question | 2 = answer | 3 = points | 4 = isDouble
+                # if new question is in the current category, we work on the question
+                if (self.newBoardData[i][0] == self.categories[c][0]):
+                    double = False
+                    if (self.doublePoints.get() == 'y'):
+                        double = True
+                    q = db.question(self.newBoardData[i][1], self.newBoardData[i][2], self.newBoardData[i][3], double)
+                    self.questions.append(q)
+                    #print (q.question, q.answer)
+            #create db.category object and insert current list of questions
+            cat = db.category(self.categories[c][0], self.questions)
+            #push category into database
+            database.categories.append(cat)
+        
+        #Finally, save new data into specified file
+        database.save()
 
 class EditBoard(tk.Frame):
 

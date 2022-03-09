@@ -1,0 +1,27 @@
+<board background="" foreground="" pointcolor="">
+
+    <category title="Art">
+        <question points="1" dailyDouble="True">
+            <title>1</title>
+            <answer>1</answer>
+        </question>
+        <question points="1" dailyDouble="True">
+            <title>2</title>
+            <answer>1</answer>
+        </question>
+    </category>
+    <category title="Math">
+        <question points="1" dailyDouble="True">
+            <title>1</title>
+            <answer>1</answer>
+        </question>
+        <question points="1" dailyDouble="True">
+            <title>2</title>
+            <answer>1</answer>
+        </question>
+        <question points="1" dailyDouble="True">
+            <title>3</title>
+            <answer>1</answer>
+        </question>
+    </category>
+</board>
