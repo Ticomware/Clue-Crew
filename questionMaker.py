@@ -183,7 +183,7 @@ class NewBoard(tk.Frame):
                         self.categories.append([category,1])
                 
             #update list into scrollview
-            #print(self.newBoardData)
+            print(self.newBoardData)
             self.updateScrollView()
 
         else:
@@ -219,8 +219,9 @@ class NewBoard(tk.Frame):
                 # if new question is in the current category, we work on the question
                 if (self.newBoardData[i][0] == self.categories[c][0]):
                     double = False
-                    if (self.doublePoints.get() == 'y'):
+                    if (self.newBoardData[i][4] == 'y'):
                         double = True
+                    print(double)
                     q = db.question(self.newBoardData[i][1], self.newBoardData[i][2], self.newBoardData[i][3], double)
                     self.questions.append(q)
                     #print (q.question, q.answer)
@@ -229,8 +230,16 @@ class NewBoard(tk.Frame):
             #push category into database
             database.categories.append(cat)
         
-        #Finally, save new data into specified file
-        database.save()
+        #validate, check if newBoardData is empty
+        if self.newBoardData:
+            #let user know data is being saved....
+            messagebox.showinfo('Success','Your current content has been saved to the new board!')
+            #save new data into specified file
+            database.save()
+        else:
+            messagebox.showerror('Invalid','Type new questions to continue')
+        #Finally, erase current questions
+        self.newBoardData.clear()
 
 class EditBoard(tk.Frame):
 

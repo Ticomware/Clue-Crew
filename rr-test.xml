@@ -5,23 +5,29 @@
             <title>1</title>
             <answer>1</answer>
         </question>
-        <question points="1" dailyDouble="True">
+        <question points="2">
             <title>2</title>
-            <answer>1</answer>
+            <answer>2</answer>
+        </question>
+        <question points="3">
+            <title>3</title>
+            <answer>3</answer>
+        </question>
+    </category>
+    <category title="Art">
+        <question points="4">
+            <title>4</title>
+            <answer>4</answer>
         </question>
     </category>
     <category title="Math">
-        <question points="1" dailyDouble="True">
+        <question points="1">
             <title>1</title>
             <answer>1</answer>
         </question>
-        <question points="1" dailyDouble="True">
+        <question points="2">
             <title>2</title>
-            <answer>1</answer>
-        </question>
-        <question points="1" dailyDouble="True">
-            <title>3</title>
-            <answer>1</answer>
+            <answer>2</answer>
         </question>
     </category>
 </board>
