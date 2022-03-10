@@ -3,6 +3,9 @@ from tkinter.scrolledtext import ScrolledText
 from tkinter import messagebox
 from tkinter import filedialog as fd
 import database as db
+import os
+import xml.etree.ElementTree as ET
+import re
 #from PIL import Image, ImageTk
 
 
@@ -36,7 +39,7 @@ class TextEditor(tk.Tk):
         self.frames = {}
 
         # add the frame classes into the list self.frames
-        for F in (StartPage, NewBoard, EditBoard):
+        for F in (StartPage, NewBoard, EditBoard, AdvancedEditBoard):
 
             frame = F(container, self)
 
@@ -206,6 +209,15 @@ class NewBoard(tk.Frame):
 
     def pushDatabase(self):
         #print(self.categories)
+
+        #DELETE all contents of file
+        tree = ET.parse(SAVEFILE)
+        root = tree.getroot()
+        for cat in root.findall('category'):
+            print(cat.attrib)
+            root.remove(cat)
+        tree.write(SAVEFILE)
+
         #call database - using existing file
         database = db.database(SAVEFILE)
         
@@ -214,6 +226,7 @@ class NewBoard(tk.Frame):
             #empty list that holds db.question objects
             self.questions = []
             #print(self.categories[c][0])
+            #loop through questions
             for i in range(len(self.newBoardData)):
                 # 0 = category | 1 = question | 2 = answer | 3 = points | 4 = isDouble
                 # if new question is in the current category, we work on the question
@@ -234,6 +247,7 @@ class NewBoard(tk.Frame):
         if self.newBoardData:
             #let user know data is being saved....
             messagebox.showinfo('Success','Your current content has been saved to the new board!')
+            #clear existing data
             #save new data into specified file
             database.save()
         else:
@@ -241,7 +255,7 @@ class NewBoard(tk.Frame):
         #Finally, erase current questions
         self.newBoardData.clear()
 
-class EditBoard(tk.Frame):
+class AdvancedEditBoard(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -249,26 +263,26 @@ class EditBoard(tk.Frame):
         tk.Label(self, background=COLOR1).place(relheight=1,relwidth=1)
 
         #main label
-        tk.Label(self, text='Edit existing board', background='black', font=FONT1, foreground='white', wraplength=300, justify='center').place(relx=0,relwidth=1,relheight=0.25)
+        tk.Label(self, text='Advanced board editor', background='black', font=FONT1, foreground='white', wraplength=300, justify='center').place(relx=0,relwidth=1,relheight=0.25)
 
         #scrollview with file
         self.st = ScrolledText(self, width=50, background=COLOR6, state='disabled', height=7,  font=('Bahnschrift', 20),foreground='black')
         self.st.place(rely=0.27,relx=0.05,relwidth=0.9, relheight=0.55)
 
-        #load file button
-        button = tk.Button(self, text="Load File", background = COLOR2, font=FONT2, command=lambda: self.loadFile())
-        button.place(relx=0.55,rely=0.85, relwidth=0.35)
-
         #save file button
-        button2 = tk.Button(self, text="Save File", background = COLOR2, font=FONT2 ,command=lambda: self.saveFile())
-        button2.place(relx=0.2,rely=0.85, relwidth=0.35)
+        button = tk.Button(self, text="Save File", background = COLOR2, font=FONT2 ,command=lambda: self.saveFile())
+        button.place(relx=0.15,rely=0.85, relwidth=0.35)
+
+        #load file button
+        button2 = tk.Button(self, text="Load File", background = COLOR2, font=FONT2, command=lambda: self.loadFile())
+        button2.place(relx=0.5,rely=0.85, relwidth=0.35)
 
         #return home button
         button3 = tk.Button(self, text="⬅️  Back to Home", background = COLOR2, font=FONT2 ,command=lambda: controller.show_frame(StartPage))
-        button3.place(relx=0.25,rely=0.92, relwidth=0.55)
+        button3.place(relx=0.22,rely=0.92, relwidth=0.55)
 
     def loadFile(self):
-        file = fd.askopenfilename(title='Open Text File', filetypes=(('Text Files', '*.txt'), ))
+        file = fd.askopenfilename(title='Open XML File', filetypes=(('Boad File', '*.xml'), ('Text','*.txt')))
         file = open(file, 'r')
         content = file.read()
 
@@ -288,11 +302,154 @@ class EditBoard(tk.Frame):
         file.close()
 
     def saveFile(self):
-        text_file = fd.askopenfilename(title='Save Text File', filetypes=(('Text Files', '*.txt'), ))
+        text_file = fd.askopenfilename(title='Save XML File', filetypes=[("All files", ".xml .txt")])
         text_file = open(text_file,'w')
         text_file.write(self.st.get(1.0, tk.END))
         text_file.close()
         
+class EditBoard(tk.Frame):
+
+    def __init__(self, parent, controller):
+        #
+        self.file = ''
+        self.questions = []
+        self.contents = ''
+        self.count = 0
+        self.cat = ''
+
+        tk.Frame.__init__(self, parent)
+        #background
+        tk.Label(self, background=COLOR1).place(relheight=1,relwidth=1)
+
+        #main label
+        tk.Label(self, text='Edit existing board', background='black', font=FONT1, foreground='white', wraplength=300, justify='center').place(relx=0,relwidth=1,relheight=0.1)
+
+        #category entry
+        tk.Label(self, text='Category', background=COLOR1, font=FONT2, foreground='WHITE', wraplength=300, justify='center').place(relx=0.02, rely= 0.12)
+        self.category = tk.Entry(self, bd=3, font=FONT2)
+        self.category.place(relx=0.2, rely=0.12, relwidth=0.25)
+
+        #double number entry
+        tk.Label(self, text='Double Question #', background=COLOR1, font=FONT2, foreground='WHITE', wraplength=300, justify='center').place(relx=0.5, rely= 0.12)
+        self.double = tk.Entry(self, bd=3, font=FONT2)
+        self.double.insert(1,0)
+        self.double.place(relx=0.88, rely=0.12, relwidth=0.1)
+
+        #search category button
+        button = tk.Button(self, text="Search", background = COLOR3, font=FONT2 ,command=lambda: self.searchCategory())
+        button.place(relx=0.35,rely=0.19, relwidth=0.35)
+
+        #scrollview for current category
+        self.st = ScrolledText(self, width=50, background=COLOR6, state='disabled', height=7,  font=('Bahnschrift', 20),foreground='black')
+        self.st.place(rely=0.27,relx=0.05,relwidth=0.9, relheight=0.55)
+
+        #save file button
+        button2 = tk.Button(self, text="Save File", background = COLOR2, font=FONT2 ,command=lambda: self.saveFile())
+        button2.place(relx=0,rely=0.85, relwidth=0.5)
+
+        #load file button
+        button3 = tk.Button(self, text="Load File", background = COLOR2, font=FONT2, command=lambda: self.loadFile())
+        button3.place(relx=0.5,rely=0.85, relwidth=0.5)
+
+        #return home button
+        button4 = tk.Button(self, text="⬅️  Back to Home", background = COLOR2, font=FONT2 ,command=lambda: controller.show_frame(StartPage))
+        button4.place(relx=0,rely=0.92, relwidth=0.5)
+
+        #advanced editor button
+        button5 = tk.Button(self, text="Advanced Editor  ➡️", background = COLOR2, font=FONT2 ,command=lambda: controller.show_frame(AdvancedEditBoard))
+        button5.place(relx=0.5,rely=0.92, relwidth=0.5)
+
+    def loadFile(self):
+        try:
+            f = fd.askopenfilename(title='Open XML File', filetypes=[("All files", ".xml")])
+            self.file = os.path.basename(f)
+            messagebox.showinfo('Files Success', 'File is loaded, search for category and make changes')
+        except:
+            messagebox.showerror('File Error','That file could not be opened! Try again!')
+
+
+    def saveFile(self):
+        try:
+            self.saveText = self.st.get('1.0', tk.END)  # Get all text in widget.
+            text = self.saveText.replace('\n', '')
+            newDataList = []
+            print(text)
+            #Modify string so it becomes an array that hold the important data
+            rawText = re.split('Points: |Question: |Answer: ', text)
+            rawText.remove('')
+            print(rawText)
+            # print(int(len(rawText)/3))
+            print(self.double.get())
+            #create questions using database
+            x = 0
+            for i in range(int(len(rawText)/3)):
+                # question, answer, points
+                if i == int(self.double.get())-1:
+                    q = db.question(rawText[x+1],rawText[x+2],rawText[x], True)
+                else:
+                    q = db.question(rawText[x+1],rawText[x+2],rawText[x])
+                newDataList.append(q)
+                x += 3
+            #delete all current categories
+            tree = ET.parse(self.file)
+            root = tree.getroot()
+            for cat in root:
+                if (cat.get('title') == self.cat):
+                    root.remove(cat)
+            tree.write(self.file)
+
+            #create category
+            c = db.category(self.cat,newDataList)
+            #create database to save on file
+            database = db.database(self.file)
+            #insert into file
+            database.categories.append(c)
+            #database save
+            database.save()
+
+        except:
+            messagebox.showerror('Something went wrong!', 'Please check your input and follow the right patterns! \n Points: p \n Question: q \n Answer: a')
+        
+
+    def searchCategory(self):
+        if (self.file != ''):
+            found = False
+            self.questions = [] # to clear?
+            self.contents = ''
+            self.cat = (self.category.get().lower()).capitalize()
+            tree = ET.parse(self.file)
+            root = tree.getroot()
+            self.count = 0
+            #list =[131]
+            for cat in root:
+                for ques in  cat:
+                    if (cat.get('title') == self.cat):
+                        self.count += 1
+                        found = True
+                        self.questions.append([ques.get('points'),ques[0].text,ques[1].text])
+                        p = 'Points: ' + ques.get('points') + '\n'
+                        q = 'Question: ' + ques[0].text + '\n'
+                        a = 'Answer: ' + ques[1].text + '\n' + '\n'
+                        self.contents += p + q + a
+
+            # if category was not found, we alert the user
+            if not found:
+                messagebox.showinfo('Not Found', 'That category was not found on your file')
+            else:
+                print (self.questions)
+                #ENABLE widget
+                self.st.config(state='normal')
+
+                #DELETE contents of current ScrolledText
+                self.st.delete(1.0,tk.END)
+
+                #INSERT contents into tkinter widget
+                self.st.insert(tk.END, self.contents)
+                        
+                #DISABLE widget
+                #self.st.config(state='disabled')
+        else:
+            messagebox.showerror('No File Found!', 'Please load a file first')
 
 
 #run program
