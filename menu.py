@@ -90,7 +90,7 @@ class Menu(arcade.View):
         try:
             Tk().withdraw()
             question_file_path = askopenfilename(title="Select Question File", filetypes=[
-                                                 ("Question Files", "*.txt")])
+                                                 ("Board Files", "*.xml")], initialdir='./Created Boards')
             if (question_file_path != ""):
                 select_teams_view = SelectTeamsView(question_file_path, self)
                 arcade.get_window().show_view(select_teams_view)
