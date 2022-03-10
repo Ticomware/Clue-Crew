@@ -1,0 +1,25 @@
+<board background="" foreground="" pointcolor="">
+
+    <category title="History">
+        <question points="500">
+            <title>q1</title>
+            <answer>a1</answer>
+        </question>
+    </category>
+    <category title="Logic">
+        <question points="500">
+            <title>q1</title>
+            <answer>a1</answer>
+        </question>
+    </category>
+    <category title="Science">
+        <question points="500">
+            <title>How old is A. Newtown?</title>
+            <answer>50 years old</answer>
+        </question>
+        <question points="100" dailyDouble="True">
+            <title>How many neutreo in ahah</title>
+            <answer>20</answer>
+        </question>
+    </category>
+</board>
