@@ -38,8 +38,8 @@ class database:
                     questionList.append(question(q.find('title').text, q.find('answer').text, q.get('points', 0), isDouble))
                 self.categories.append(category(categoryTitle, questionList))
 
-        else:
-            raise InvalidXMLFile
+        #else:
+            #raise InvalidXMLFile
 
     
     def getBoard(self):
@@ -93,5 +93,5 @@ class database:
                 print(f'Question: {q.question} ({q.pointValue} points)')
                 print(f'Answer: {q.answer}\n')
 
-class InvalidXMLFile(Exception):
-   pass
+#class InvalidXMLFile(Exception):
+   #pass
