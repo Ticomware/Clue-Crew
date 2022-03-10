@@ -209,7 +209,7 @@ class NewBoard(tk.Frame):
 
     def pushDatabase(self):
         #print(self.categories)
-
+        
         #DELETE all contents of file
         tree = ET.parse(SAVEFILE)
         root = tree.getroot()
@@ -302,7 +302,7 @@ class AdvancedEditBoard(tk.Frame):
         file.close()
 
     def saveFile(self):
-        text_file = fd.askopenfilename(title='Save XML File', filetypes=[("All files", ".xml .txt")])
+        text_file = fd.asksaveasfilename(title='Save XML File', filetypes=[("XML files", ".xml")])
         text_file = open(text_file,'w')
         text_file.write(self.st.get(1.0, tk.END))
         text_file.close()
