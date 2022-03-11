@@ -8,12 +8,15 @@ from tkinter.messagebox import askyesnocancel
 from tkinter.filedialog import asksaveasfile
 from database import database
 import pickle
+from team_scores_editor import EditTeamScoresView
 
 BOX_COLOR = arcade.color.GREEN
 BOX_TEXT_COLOR = arcade.color.PURPLE
 
 QUIT_BUTTON_WIDTH = 50
 QUIT_BUTTON_HEIGHT = 35
+EDIT_BUTTON_WIDTH = 150
+EDIT_BUTTON_HEIGHT = 35
 
 TEAM_DISPLAY_FONT_COLOR = arcade.color.ANTIQUE_WHITE
 TEAM_DISPLAY_FONT_SIZE = 15
@@ -56,9 +59,9 @@ class Board(arcade.View):
         if question_file_path:
             self.setup_boxes(question_file_path)
 
-        quit_button = FunctionButton(self.quit, 'Quit', WINDOW_WIDTH - QUIT_BUTTON_WIDTH / 2 - BOX_PADDING,
-                                 WINDOW_HEIGHT - QUIT_BUTTON_HEIGHT / 2 - BOX_PADDING, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT)
-        self.buttons = [quit_button]
+        quit_button = FunctionButton(self.quit, 'Quit', QUIT_BUTTON_WIDTH / 2 + BOX_PADDING, WINDOW_HEIGHT - QUIT_BUTTON_HEIGHT / 2 - BOX_PADDING, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT)
+        edit_team_scores_button = ViewButton(EditTeamScoresView(self), 'Edit Team Scores', WINDOW_WIDTH - EDIT_BUTTON_WIDTH / 2 - BOX_PADDING, WINDOW_HEIGHT - EDIT_BUTTON_HEIGHT / 2 - BOX_PADDING, EDIT_BUTTON_WIDTH, EDIT_BUTTON_HEIGHT)
+        self.buttons = [edit_team_scores_button, quit_button]
 
     def setup_boxes(self, question_file_path):
         board_data = database(question_file_path)
