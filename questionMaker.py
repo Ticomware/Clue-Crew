@@ -10,7 +10,7 @@ import re
 
 
 #--- SETTINGS ---
-SAVEFILE = 'rr-test.xml'    #default save file
+SAVEFILE = 'default.xml'    #default save file
 WIDTH = 1100                #width of window
 HEIGHT = 900                #height of window
 COLOR1 = '#5A78DB'
@@ -207,10 +207,7 @@ class NewBoard(tk.Frame):
         #DISABLE widget
         self.st.config(state='disabled')
 
-    def pushDatabase(self):
-        #print(self.categories)
-        
-        #DELETE all contents of file
+    def deleteCurrentDefaultFile(self):
         tree = ET.parse(SAVEFILE)
         root = tree.getroot()
         for cat in root.findall('category'):
@@ -218,42 +215,74 @@ class NewBoard(tk.Frame):
             root.remove(cat)
         tree.write(SAVEFILE)
 
-        #call database - using existing file
-        database = db.database(SAVEFILE)
-        
-        #loop through categories
-        for c in range(len(self.categories)):
-            #empty list that holds db.question objects
-            self.questions = []
-            #print(self.categories[c][0])
-            #loop through questions
-            for i in range(len(self.newBoardData)):
-                # 0 = category | 1 = question | 2 = answer | 3 = points | 4 = isDouble
-                # if new question is in the current category, we work on the question
-                if (self.newBoardData[i][0] == self.categories[c][0]):
-                    double = False
-                    if (self.newBoardData[i][4] == 'y'):
-                        double = True
-                    print(double)
-                    q = db.question(self.newBoardData[i][1], self.newBoardData[i][2], self.newBoardData[i][3], double)
-                    self.questions.append(q)
-                    #print (q.question, q.answer)
-            #create db.category object and insert current list of questions
-            cat = db.category(self.categories[c][0], self.questions)
-            #push category into database
-            database.categories.append(cat)
-        
-        #validate, check if newBoardData is empty
+    def pushDatabase(self):
+        #IF there is at least one new data entry, we earse default and start the creation of new file
         if self.newBoardData:
+            #DELETE all contents of file
+            self.deleteCurrentDefaultFile()
+            #call database - using existing file
+            database = db.database(SAVEFILE)
+            
+            #loop through categories
+            for c in range(len(self.categories)):
+                #empty list that holds db.question objects
+                self.questions = []
+                #print(self.categories[c][0])
+                #loop through questions
+                for i in range(len(self.newBoardData)):
+                    # 0 = category | 1 = question | 2 = answer | 3 = points | 4 = isDouble
+                    # if new question is in the current category, we work on the question
+                    if (self.newBoardData[i][0] == self.categories[c][0]):
+                        double = False
+                        if (self.newBoardData[i][4] == 'y'):
+                            double = True
+                        print(double)
+                        q = db.question(self.newBoardData[i][1], self.newBoardData[i][2], self.newBoardData[i][3], double)
+                        self.questions.append(q)
+                        #print (q.question, q.answer)
+                #create db.category object and insert current list of questions
+                cat = db.category(self.categories[c][0], self.questions)
+                #push category into database
+                database.categories.append(cat)
+
+            #save new data into default file
+            database.save()
+
+            #open default file and create string of all content
+            contents = ''
+            with open(SAVEFILE) as f:
+                contents += f.read()
+
+            #ask to save as new file
+            text_file = fd.asksaveasfilename(title='Save XML File', filetypes=[("XML files", ".xml")])
+            text_file = open(text_file,'w')
+            text_file.write(contents)
+            text_file.close()
             #let user know data is being saved....
             messagebox.showinfo('Success','Your current content has been saved to the new board!')
-            #clear existing data
-            #save new data into specified file
-            database.save()
+
+
+        #ELSE we ask for new questions
         else:
             messagebox.showerror('Invalid','Type new questions to continue')
-        #Finally, erase current questions
+        
+        
+        #Finally, erase everything
+        self.category.delete(0,tk.END)
+        self.question.delete(0,tk.END)
+        self.answer.delete(0,tk.END)
+        self.points.delete(0,tk.END)
+        self.deleteCurrentDefaultFile()
         self.newBoardData.clear()
+        self.categories.clear()
+        self.questions.clear()
+        #ENABLE widget
+        self.st.config(state='normal')
+        #DELETE contents of current ScrolledText
+        self.st.delete(1.0,tk.END)         
+        #DISABLE widget
+        self.st.config(state='disabled')
+
 
 class AdvancedEditBoard(tk.Frame):
 
@@ -332,7 +361,7 @@ class EditBoard(tk.Frame):
         #double number entry
         tk.Label(self, text='Double Question #', background=COLOR1, font=FONT2, foreground='WHITE', wraplength=300, justify='center').place(relx=0.5, rely= 0.12)
         self.double = tk.Entry(self, bd=3, font=FONT2)
-        self.double.insert(1,0)
+        self.double.insert(0,0)
         self.double.place(relx=0.88, rely=0.12, relwidth=0.1)
 
         #search category button
