@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<board background="#031f60" foreground="#ffffff" pointcolor="#f9be10">
+    <category title="Technology">
+        <question points="200">
+            <title>Apple created the iPhone. ___ created Android.</title>
+            <answer>Google</answer>
+        </question>
+        <question points="400">
+            <title>Along with Paul Allen, Microsoft was founded by this philanthropist.</title>
+            <answer>Bill Gates</answer>
+        </question>
+        <question points="600">
+            <title>This former executive is known for shouting "Developers, Developers, Developers!"</title>
+            <answer>Steve Ballmer</answer>
+        </question>
+    </category>
+    <category title="History">
+        <question points="200">
+            <title>question</title>
+            <answer>answer</answer>
+        </question>
+        <question points="400">
+            <title>question</title>
+            <answer>answer</answer>
+        </question>
+        <question points="600">
+            <title>question</title>
+            <answer>answer</answer>
+        </question>
+    </category>
+        <category title="Back to the Future">
+        <question points="200">
+            <title>The time machine had to reach this speed to time travel</title>
+            <answer>88</answer>
+        </question>
+        <question points="400">
+            <title>The time machine was built on this vehicle</title>
+            <answer>The DeLorean</answer>
+        </question>
+        <question points="600">
+            <title>Doc brown sourced uranium from a group of terrorists from this country</title>
+            <answer>Libya</answer>
+        </question>
+    </category>
+</board>
+    

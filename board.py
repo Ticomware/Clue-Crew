@@ -131,14 +131,17 @@ class Board(arcade.View):
 
         for box in self.question_boxes:
             if box.hovered and not button_clicked:
-                question = box.on_click()
                 button_clicked = True
-                self.question_boxes.remove(box)
-                self.ask_question(question)
+                self.ask_question(box)
 
-    def ask_question(self, question):
-        question_view = QuestionView(question, self)
+    def ask_question(self, box):
+        question_view = QuestionView(box, self)
         self.window.show_view(question_view)
+    
+    def question_answered(self, question_box):
+        self.update_team_display()
+        self.question_boxes.remove(question_box)
+        self.check_game_over()
 
     def on_draw(self):
         arcade.start_render()
