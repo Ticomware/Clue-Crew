@@ -25,8 +25,7 @@ class QuestionView(arcade.View):
         self.answer_text = arcade.Text('', WINDOW_WIDTH / 2, WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT / 2 - 75, anchor_x="center", anchor_y="center", align='center', font_size=15, width=WINDOW_WIDTH - 2 * BOX_PADDING, multiline=True)
 
         self.teams_boxes = []
-        show_answer_button = FunctionButton(
-            self.show_answer, 'Show Answer', WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT)
+        show_answer_button = FunctionButton(self.show_answer, 'Show Answer', WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, color=self.board_view.colors['foreground'], text_color=self.board_view.colors['text'])
         self.buttons = [show_answer_button]
 
     def setup_teams_boxes(self):
@@ -34,12 +33,10 @@ class QuestionView(arcade.View):
         y = WINDOW_HEIGHT / 2 + TEAM_CHOICE_HEIGHT + BOX_PADDING
         teams_boxes = []
         for team in self.board_view.teams:
-            teams_box = Box(team, team.name, x, y, width=TEAM_CHOICE_WIDTH,
-                            height=TEAM_CHOICE_HEIGHT, font_size=10)
+            teams_box = Box(team, team.name, x, y, width=TEAM_CHOICE_WIDTH, height=TEAM_CHOICE_HEIGHT, font_size=10, color=self.board_view.colors['foreground'], text_color=self.board_view.colors['text'])
             teams_boxes.append(teams_box)
             y -= TEAM_CHOICE_HEIGHT + BOX_PADDING
-        no_team_box = Box(None, 'No correct answer', x, y,
-                          width=TEAM_CHOICE_WIDTH, height=TEAM_CHOICE_HEIGHT, font_size=10)
+        no_team_box = Box(None, 'No correct answer', x, y, width=TEAM_CHOICE_WIDTH, height=TEAM_CHOICE_HEIGHT, font_size=10, color=self.board_view.colors['foreground'], text_color=self.board_view.colors['text'])
         teams_boxes.append(no_team_box)
         return teams_boxes
 

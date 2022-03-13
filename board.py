@@ -9,8 +9,9 @@ from tkinter.filedialog import asksaveasfile
 from database import database
 import pickle
 
-BOX_COLOR = arcade.color.GREEN
-BOX_TEXT_COLOR = arcade.color.PURPLE
+DEFAULT_BACKGROUND_COLOR = arcade.color.BLACK
+DEFAULT_FOREGROUND_COLOR = arcade.color.GREEN
+DEFAULT_TEXT_COLOR = arcade.color.PURPLE
 
 QUIT_BUTTON_WIDTH = 50
 QUIT_BUTTON_HEIGHT = 35
@@ -18,7 +19,6 @@ QUIT_BUTTON_HEIGHT = 35
 TEAM_DISPLAY_FONT_COLOR = arcade.color.ANTIQUE_WHITE
 TEAM_DISPLAY_FONT_SIZE = 15
 CATEGORY_FONT_SIZE_SCALE = 12
-CATEGORY_FONT_COLOR = arcade.color.ANTIQUE_WHITE
 
 class InvalidQuestionFile(Exception):
     def __init__(self, message) -> None:
@@ -34,10 +34,16 @@ class Board(arcade.View):
         saved_board_dictionary = pickle.load(saved_board_file)
         saved_board = Board(main_menu_view=main_menu_view)
         saved_board.question_boxes = saved_board_dictionary['question_boxes']
+        saved_board.colors = saved_board_dictionary['colors']
         
         BOX_WIDTH = saved_board.question_boxes[0].width
-        saved_board.category_labels = [arcade.Text(**category, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True) for category in saved_board_dictionary['categories']]
+        saved_board.category_labels = [arcade.Text(**category, color=saved_board.colors['text'], anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True) for category in saved_board_dictionary['categories']]
         saved_board.teams = saved_board_dictionary['teams']
+        saved_board.team_display.color = saved_board.colors['text']
+        for button in saved_board.buttons:
+            button.color = saved_board.colors['foreground']
+            button.text_color = saved_board.colors['text']
+        arcade.set_background_color(saved_board.colors['background'])
         return saved_board
 
     def __init__(self, question_file_path=None, num_teams=None, main_menu_view=None):
@@ -46,23 +52,34 @@ class Board(arcade.View):
         self.main_menu_view = None
         self.category_labels = []
         self.question_boxes = []
-        self.team_display = arcade.Text('', WINDOW_WIDTH / 2, TEAM_DISPLAY_HEIGHT / 2, color=TEAM_DISPLAY_FONT_COLOR, font_size=TEAM_DISPLAY_FONT_SIZE, anchor_x="center", anchor_y="center")
-        self.message_display = arcade.Text(f"Please select a question...", WINDOW_WIDTH / 2, WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", font_size=20)
+        self.colors = {'background': DEFAULT_BACKGROUND_COLOR, 'foreground': DEFAULT_FOREGROUND_COLOR, 'text': DEFAULT_TEXT_COLOR}
         
         if num_teams:
             self.teams = [Team(f"Team {i+1}") for i in range(num_teams)]        
         if main_menu_view:
             self.main_menu_view = main_menu_view
         if question_file_path:
-            self.setup_boxes(question_file_path)
+            board_data = database(question_file_path)
+            self.setup_colors(board_data)
+            self.setup_boxes(board_data)
 
-        quit_button = FunctionButton(self.quit, 'Quit', WINDOW_WIDTH - QUIT_BUTTON_WIDTH / 2 - BOX_PADDING,
-                                 WINDOW_HEIGHT - QUIT_BUTTON_HEIGHT / 2 - BOX_PADDING, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT)
+        self.team_display = arcade.Text('', WINDOW_WIDTH / 2, TEAM_DISPLAY_HEIGHT / 2, color=self.colors['text'], font_size=TEAM_DISPLAY_FONT_SIZE, anchor_x="center", anchor_y="center")
+        self.message_display = arcade.Text(f"Please select a question...", WINDOW_WIDTH / 2, WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", font_size=20)
+        arcade.set_background_color(self.colors['background'])
+
+        quit_button = FunctionButton(self.quit, 'Quit', WINDOW_WIDTH - QUIT_BUTTON_WIDTH / 2 - BOX_PADDING, WINDOW_HEIGHT - QUIT_BUTTON_HEIGHT / 2 - BOX_PADDING, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'])
         self.buttons = [quit_button]
 
-    def setup_boxes(self, question_file_path):
-        board_data = database(question_file_path)
+    def setup_colors(self, board_data):
+        self.colors['background'] = self.hex_to_rgb(board_data.getBackgroundColor())
+        self.colors['foreground'] = self.hex_to_rgb(board_data.getForegroundColor())
+        self.colors['text'] = self.hex_to_rgb(board_data.getPointColor())
+    
+    def hex_to_rgb(self, hex_string):
+        nums = hex_string.strip('#')
+        return [int(nums[i:i+2], 16) for i in range(0, len(nums), 2)]
 
+    def setup_boxes(self, board_data):
         categories = board_data.getBoard()
         num_categories = len(categories)
         num_questions = len(max(categories, key=lambda category: len(category.questions)).questions)
@@ -79,12 +96,12 @@ class Board(arcade.View):
         CATEGORY_FONT_SIZE = BOX_WIDTH // CATEGORY_FONT_SIZE_SCALE
 
         for category in categories:
-            self.category_labels.append(arcade.Text(category.title, x, category_y, color=CATEGORY_FONT_COLOR, font_size=CATEGORY_FONT_SIZE, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True))
+            self.category_labels.append(arcade.Text(category.title, x, category_y, color=self.colors['text'], font_size=CATEGORY_FONT_SIZE, anchor_x='center', anchor_y='center', align='center', width=BOX_WIDTH, multiline= True))
 
             for question in category.questions:
                 question.pointValue = int(question.pointValue)
                 box = Box(question, str(question.pointValue), x, y,
-                          width=BOX_WIDTH, height=BOX_HEIGHT)
+                          width=BOX_WIDTH, height=BOX_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'])
                 self.question_boxes.append(box)
                 y -= box.height + BOX_PADDING
             x += box.width + BOX_PADDING
@@ -148,9 +165,10 @@ class Board(arcade.View):
                 file = asksaveasfile(mode='wb', filetypes=filetypes, defaultextension=filetypes, initialdir='./Saved Boards/')
                 if file is not None:
                     board_dictionary = {
-                    'teams': self.teams,
-                    'categories': [{'text':category_label.value, 'start_x': category_label.x, 'start_y': category_label.y, 'font_size':category_label.font_size, 'color': category_label.color} for category_label in self.category_labels],
-                    'question_boxes': self.question_boxes
+                        'teams': self.teams,
+                        'categories': [{'text':category_label.value, 'start_x': category_label.x, 'start_y': category_label.y, 'font_size':category_label.font_size} for category_label in self.category_labels],
+                        'question_boxes': self.question_boxes,
+                        'colors': self.colors
                     }
                     pickle.dump(board_dictionary, file)
                     self.window.show_view(self.main_menu_view)
