@@ -183,22 +183,30 @@ class Board(arcade.View):
 class GameOver(arcade.View):
     def __init__(self, teams, main_menu_view):
         super().__init__()
-        self.team_strings = self.get_team_string(teams)
-        main_menu_button = ViewButton(main_menu_view, 'Main Menu', BOX_PADDING + (DEFAULT_BUTTON_WIDTH/2),
-                                      DEFAULT_BUTTON_HEIGHT + BOX_PADDING, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_HEIGHT)
+        self.title = arcade.Text('Results', self.window.width / 2, self.window.height - 75, color=DEFAULT_TEXT_COLOR, font_size=50, anchor_x="center", anchor_y="center")
+        self.team_texts = self.create_team_texts(teams)
+
+        main_menu_button = ViewButton(main_menu_view, 'Main Menu', self.window.width / 2, DEFAULT_BUTTON_HEIGHT + BOX_PADDING, DEFAULT_BUTTON_WIDTH, DEFAULT_BUTTON_HEIGHT)
         self.buttons = [main_menu_button]
 
-    def get_team_string(self, teams):
+    def create_team_texts(self, teams):
         teams.sort(key=lambda team: team.score, reverse=True)
-        return [f'{team.name} : {team.score}' for team in teams]
+
+        team_texts = []
+        y = WINDOW_HEIGHT - 150
+        for string in [f'{team.name} : {team.score}' for team in teams]:
+            team_text = arcade.Text(string, self.window.width / 2, y, font_size=20, anchor_x="center", anchor_y="center", color=DEFAULT_TEXT_COLOR)
+            team_texts.append(team_text)
+            y -= 50
+        return team_texts
 
     def on_draw(self):
         arcade.start_render()
-        y = WINDOW_HEIGHT - 50
-        for string in self.team_strings:
-            arcade.draw_text(string, WINDOW_WIDTH / 2, y,
-                             font_size=20, anchor_x="center", anchor_y="center")
-            y -= 50
+
+        self.title.draw()
+
+        for text in self.team_texts:
+            text.draw()
 
         for button in self.buttons:
             button.draw()
