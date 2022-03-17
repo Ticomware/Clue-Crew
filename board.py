@@ -70,8 +70,8 @@ class Board(arcade.View):
         self.message_display = arcade.Text(f"Please select a question...", WINDOW_WIDTH / 2, WINDOW_HEIGHT - MESSAGE_BOX_HEIGHT / 2, anchor_x="center", anchor_y="center", font_size=20)
         arcade.set_background_color(self.colors['background'])
 
-        quit_button = FunctionButton(self.quit, 'Quit', WINDOW_WIDTH - QUIT_BUTTON_WIDTH / 2 - BOX_PADDING, WINDOW_HEIGHT - QUIT_BUTTON_HEIGHT / 2 - BOX_PADDING, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'])
-        edit_team_scores_button = ViewButton(EditTeamScoresView(self), 'Edit Team Scores', WINDOW_WIDTH - EDIT_BUTTON_WIDTH / 2 - BOX_PADDING, WINDOW_HEIGHT - EDIT_BUTTON_HEIGHT / 2 - BOX_PADDING, EDIT_BUTTON_WIDTH, EDIT_BUTTON_HEIGHT)
+        quit_button = FunctionButton(self.quit, 'Quit', QUIT_BUTTON_WIDTH / 2 + BOX_PADDING, WINDOW_HEIGHT - QUIT_BUTTON_HEIGHT / 2 - BOX_PADDING, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'])
+        edit_team_scores_button = ViewButton(EditTeamScoresView(self), 'Edit Team Scores', WINDOW_WIDTH - EDIT_BUTTON_WIDTH / 2 - BOX_PADDING, WINDOW_HEIGHT - EDIT_BUTTON_HEIGHT / 2 - BOX_PADDING, EDIT_BUTTON_WIDTH, EDIT_BUTTON_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'])
         self.buttons = [edit_team_scores_button, quit_button]
 
     def setup_colors(self, board_data):
