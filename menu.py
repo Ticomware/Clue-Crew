@@ -9,6 +9,9 @@ from constants import BOX_PADDING, DEFAULT_BUTTON_HEIGHT, DEFAULT_BUTTON_WIDTH, 
 from board import InvalidQuestionFile
 from question import BUTTON_HEIGHT
 
+#board editor
+import questionMaker as questMaker
+
 BUTTON_WIDTH = DEFAULT_BUTTON_WIDTH
 BUTTON_HEIGHT = DEFAULT_BUTTON_HEIGHT
 BUTTON_COLOR = arcade.color.GREEN
@@ -75,8 +78,14 @@ class Menu(arcade.View):
 
         play_game_button = FunctionButton(self.begin_game, "Play Game", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + BUTTON_HEIGHT + BOX_PADDING, BUTTON_WIDTH, BUTTON_HEIGHT)
         load_game_button = FunctionButton(self.load_game, "Load Game", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT)
+        board_editor_button = FunctionButton(self.board_editor,"Open Board Editor", WINDOW_WIDTH/2, 50, BUTTON_WIDTH*2, BUTTON_HEIGHT)
         exit_button = ExitButton(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - BOX_PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT)
-        self.buttons = [play_game_button, load_game_button, exit_button]
+        self.buttons = [play_game_button,load_game_button, board_editor_button, exit_button]
+
+    #creation of textEditor object and make it run with mainloop()
+    def board_editor(self):
+        boardMaker = questMaker.TextEditor()
+        boardMaker.mainloop()
 
     def load_game(self):
         filetypes = [('Jeopardy Board', '*.jpd')]

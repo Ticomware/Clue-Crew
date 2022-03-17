@@ -228,5 +228,5 @@ class EditBoard(tk.Frame):
 
 
 #run program
-app = TextEditor()
-app.mainloop()
+# app = TextEditor()
+# app.mainloop()
