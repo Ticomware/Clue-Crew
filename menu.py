@@ -74,8 +74,7 @@ class SelectTeamsView(arcade.View):
         for button in self.buttons:
             button.draw()
 
-    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        # Determine if any boxes are being clicked
+    def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
         for box in self.teams_boxes:
             if box.hovered:
                 num_teams = box.on_click()
