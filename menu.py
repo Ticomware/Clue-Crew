@@ -75,7 +75,7 @@ class Menu(arcade.View):
     def __init__(self):
         super().__init__()
 
-        play_game_button = FunctionButton(self.begin_game, "Play Game", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + BUTTON_HEIGHT + BOX_PADDING, BUTTON_WIDTH, BUTTON_HEIGHT)
+        play_game_button = FunctionButton(self.begin_game, "New Game", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + BUTTON_HEIGHT + BOX_PADDING, BUTTON_WIDTH, BUTTON_HEIGHT)
         load_game_button = FunctionButton(self.load_game, "Load Game", WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT)
         board_editor_button = FunctionButton(self.board_editor,"Open Board Editor", WINDOW_WIDTH/2, 50, BUTTON_WIDTH*2, BUTTON_HEIGHT)
         exit_button = ExitButton(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - BOX_PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT)
