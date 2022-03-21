@@ -1,5 +1,8 @@
 import arcade
 
+######################################
+#         Jeopardy Constants         # 
+######################################
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 BACKGROUND_COLOR = arcade.color.BLACK
