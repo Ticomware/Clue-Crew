@@ -482,5 +482,6 @@ class EditBoard(tk.Frame):
 
 
 #run program
-app = TextEditor()
-app.mainloop()
+if __name__ == '__main__':
+    app = TextEditor()
+    app.mainloop()
