@@ -465,6 +465,12 @@ class EditBoard(tk.Frame):
             # if category was not found, we alert the user
             if not found:
                 messagebox.showinfo('Not Found', 'That category was not found on your file')
+                #ENABLE widget
+                self.st.config(state='normal')
+                #DELETE contents of current ScrolledText
+                self.st.delete(1.0,tk.END)
+                #DISABLE widget
+                self.st.config(state='disabled')
             else:
                 print (self.questions)
                 #ENABLE widget
