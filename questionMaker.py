@@ -335,7 +335,8 @@ class AdvancedEditBoard(tk.Frame):
         text_file = open(text_file,'w')
         text_file.write(self.st.get(1.0, tk.END))
         text_file.close()
-        
+
+
 class EditBoard(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -482,5 +483,6 @@ class EditBoard(tk.Frame):
 
 
 #run program
-app = TextEditor()
-app.mainloop()
+if __name__ == '__main__':
+    app = TextEditor()
+    app.mainloop()

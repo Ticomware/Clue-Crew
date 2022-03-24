@@ -3,7 +3,7 @@ from buttons import Box, FunctionButton, ViewButton
 from file_parser import FileParser
 from question import Question, QuestionView
 from team import Team
-from constants import WINDOW_HEIGHT, WINDOW_WIDTH, BOX_PADDING, DEFAULT_BUTTON_HEIGHT, DEFAULT_BUTTON_WIDTH, MESSAGE_BOX_HEIGHT, TEAM_DISPLAY_HEIGHT
+from constants import WINDOW_HEIGHT, WINDOW_WIDTH, BOX_PADDING, DEFAULT_BUTTON_HEIGHT, DEFAULT_BUTTON_WIDTH, MESSAGE_BOX_HEIGHT, TEAM_DISPLAY_HEIGHT, DEFAULT_BACKGROUND_COLOR, DEFAULT_FOREGROUND_COLOR, DEFAULT_TEXT_COLOR
 from tkinter.messagebox import askyesnocancel
 from tkinter.filedialog import asksaveasfile
 from database import database
@@ -13,10 +13,6 @@ from team_scores_editor import EditTeamScoresView
 ####################################################### 
 #                   Board Constants                   #
 ####################################################### 
-DEFAULT_BACKGROUND_COLOR = arcade.color.BLACK
-DEFAULT_FOREGROUND_COLOR = arcade.color.GREEN
-DEFAULT_TEXT_COLOR = arcade.color.PURPLE
-
 QUIT_BUTTON_WIDTH = 50
 QUIT_BUTTON_HEIGHT = 35
 EDIT_BUTTON_WIDTH = 150
@@ -25,6 +21,7 @@ EDIT_BUTTON_HEIGHT = 35
 TEAM_DISPLAY_FONT_COLOR = arcade.color.ANTIQUE_WHITE
 TEAM_DISPLAY_FONT_SIZE = 15
 CATEGORY_FONT_SIZE_SCALE = 12
+QUESTION_BOX_FONT_SIZE_SCALE = 5
 
 ##################################################################################
 #                                   Exceptions                                   #
@@ -119,9 +116,16 @@ class Board(arcade.View):
             board_data
                 Database object containing Jeopardy board data.
         """
-        self.colors['background'] = self.hex_to_rgb(board_data.getBackgroundColor())
-        self.colors['foreground'] = self.hex_to_rgb(board_data.getForegroundColor())
-        self.colors['text'] = self.hex_to_rgb(board_data.getPointColor())
+        background_color_hex = board_data.getBackgroundColor()
+        foreground_color_hex = board_data.getForegroundColor()
+        text_color_hex = board_data.getPointColor()
+        
+        if background_color_hex:
+            self.colors['background'] = self.hex_to_rgb(background_color_hex)
+        if foreground_color_hex:
+            self.colors['foreground'] = self.hex_to_rgb(foreground_color_hex)
+        if text_color_hex:
+             self.colors['text'] = self.hex_to_rgb(text_color_hex)
     
     def hex_to_rgb(self, hex_string):
         """
@@ -159,6 +163,7 @@ class Board(arcade.View):
         y = WINDOW_HEIGHT - BOX_HEIGHT // 2 - MESSAGE_BOX_HEIGHT - CATEGORY_HEIGHT - BOX_PADDING
         category_y = WINDOW_HEIGHT - BOX_PADDING - MESSAGE_BOX_HEIGHT
         CATEGORY_FONT_SIZE = BOX_WIDTH // CATEGORY_FONT_SIZE_SCALE
+        QUESTION_BOX_FONT_SIZE = BOX_WIDTH // QUESTION_BOX_FONT_SIZE_SCALE
 
         for category in categories:
             # Create category labels
@@ -168,7 +173,7 @@ class Board(arcade.View):
                 # Create question boxes
                 question.pointValue = int(question.pointValue)
                 box = Box(question, str(question.pointValue), x, y,
-                          width=BOX_WIDTH, height=BOX_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'])
+                          width=BOX_WIDTH, height=BOX_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'], font_size=QUESTION_BOX_FONT_SIZE)
                 self.question_boxes.append(box)
                 y -= box.height + BOX_PADDING
             x += box.width + BOX_PADDING

@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
 import arcade
+from constants import DEFAULT_FOREGROUND_COLOR, DEFAULT_TEXT_COLOR
 from point import Point
 
 ######################################### 
 #               Constants               #
 ######################################### 
-DEFAULT_COLOR = arcade.color.GREEN
-DEFAULT_TEXT_COLOR = arcade.color.PURPLE
-DEFAULT_FONT_SIZE = 12
+DEFAULT_BOX_COLOR = DEFAULT_FOREGROUND_COLOR
+DEFAULT_BOX_TEXT_COLOR = DEFAULT_TEXT_COLOR
+DEFUALT_BOX_FONT_SIZE = 12
 
 ######################################################################################################
 #                                              Buttons                                               #
@@ -18,7 +19,7 @@ class Button(ABC):
     The button consists of a rectangle and text. The colors of the button are altered when it is hovered.
     All derived buttons must define an on_click method.
     """
-    def __init__(self, text, x, y, width, height, color=DEFAULT_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFAULT_FONT_SIZE):
+    def __init__(self, text, x, y, width, height, color=DEFAULT_BOX_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFUALT_BOX_FONT_SIZE):
         self.text = text
         self.center = Point(x, y)
         self.width = width
@@ -56,18 +57,18 @@ class Button(ABC):
                 self.center.x, self.center.y, self.width, self.height, self.text_color)
             arcade.draw_text(self.text, self.center.x, self.center.y, self.color,
                              anchor_x="center", anchor_y="center", font_size=self.font_size)
-
+                             
     @abstractmethod
     def on_click(self):
         pass
 
 class Box(Button):
-    """
+  """
     Representation of a box containing an item.
     The item is returned when the box is clicked.
     """
-    def __init__(self, item, text, x, y, width, height, color=DEFAULT_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFAULT_FONT_SIZE):
-        super().__init__(text, x, y, width, height, color, text_color)
+    def __init__(self, item, text, x, y, width, height, color=DEFAULT_BOX_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFUALT_BOX_FONT_SIZE):
+        super().__init__(text, x, y, width, height, color, text_color, font_size)
         self.item = item
 
     def on_click(self):
@@ -75,8 +76,8 @@ class Box(Button):
         return self.item
 
 class FunctionButton(Button):
-    """ Representation of a button that executes a function when it is clicked. """
-    def __init__(self, function, text, x, y, width, height, color=DEFAULT_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFAULT_FONT_SIZE):
+  """ Representation of a button that executes a function when it is clicked. """
+    def __init__(self, function, text, x, y, width, height, color=DEFAULT_BOX_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFUALT_BOX_FONT_SIZE):
         super().__init__(text, x, y, width, height, color, text_color, font_size)
         self.function = function
 
@@ -89,7 +90,7 @@ class ViewButton(Button):
     Representaion of a navigation button.
     Alters the current view when it is clicked.
     """
-    def __init__(self, view, text, x, y, width, height, color=DEFAULT_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFAULT_FONT_SIZE):
+    def __init__(self, view, text, x, y, width, height, color=DEFAULT_BOX_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFUALT_BOX_FONT_SIZE):
         super().__init__(text, x, y, width, height, color, text_color, font_size)
         self.view = view
 
@@ -102,6 +103,6 @@ class ExitButton(FunctionButton):
     Representation of an exit button. 
     The main arcade window is closed when this button is clicked. 
     """
-    def __init__(self, x, y, width, height, color=DEFAULT_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFAULT_FONT_SIZE):
+    def __init__(self, x, y, width, height, color=DEFAULT_BOX_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFUALT_BOX_FONT_SIZE):
         super().__init__(arcade.close_window, 'Exit', x, y,
                          width, height, color, text_color, font_size)
