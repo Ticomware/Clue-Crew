@@ -105,7 +105,7 @@ class Board(arcade.View):
 
         # Create buttons
         quit_button = FunctionButton(self.quit, 'Quit', QUIT_BUTTON_WIDTH / 2 + BOX_PADDING, WINDOW_HEIGHT - QUIT_BUTTON_HEIGHT / 2 - BOX_PADDING, QUIT_BUTTON_WIDTH, QUIT_BUTTON_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'])
-        edit_team_scores_button = ViewButton(EditTeamScoresView(self), 'Edit Team Scores', WINDOW_WIDTH - EDIT_BUTTON_WIDTH / 2 - BOX_PADDING, WINDOW_HEIGHT - EDIT_BUTTON_HEIGHT / 2 - BOX_PADDING, EDIT_BUTTON_WIDTH, EDIT_BUTTON_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'])
+        edit_team_scores_button = FunctionButton(self.edit_team_scores, 'Edit Team Scores', WINDOW_WIDTH - EDIT_BUTTON_WIDTH / 2 - BOX_PADDING, WINDOW_HEIGHT - EDIT_BUTTON_HEIGHT / 2 - BOX_PADDING, EDIT_BUTTON_WIDTH, EDIT_BUTTON_HEIGHT, color=self.colors['foreground'], text_color=self.colors['text'])
         self.buttons = [edit_team_scores_button, quit_button]
 
     def setup_colors(self, board_data):
@@ -263,6 +263,10 @@ class Board(arcade.View):
     
     def on_show_view(self):
         self.update_team_display()
+    
+    def edit_team_scores(self):
+        team_scores_editor = EditTeamScoresView(self)
+        self.window.show_view(team_scores_editor)
 
     def quit(self):
         """
