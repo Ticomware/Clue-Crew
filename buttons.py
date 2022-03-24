@@ -63,7 +63,7 @@ class Button(ABC):
         pass
 
 class Box(Button):
-  """
+    """
     Representation of a box containing an item.
     The item is returned when the box is clicked.
     """
@@ -76,7 +76,7 @@ class Box(Button):
         return self.item
 
 class FunctionButton(Button):
-  """ Representation of a button that executes a function when it is clicked. """
+    """ Representation of a button that executes a function when it is clicked. """
     def __init__(self, function, text, x, y, width, height, color=DEFAULT_BOX_COLOR, text_color=DEFAULT_TEXT_COLOR, font_size=DEFUALT_BOX_FONT_SIZE):
         super().__init__(text, x, y, width, height, color, text_color, font_size)
         self.function = function
