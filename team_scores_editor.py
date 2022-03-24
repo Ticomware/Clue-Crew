@@ -37,7 +37,7 @@ class EditTeamScoresView(arcade.View):
     def __init__(self, board_view):
         super().__init__()
         self.board_view = board_view
-        self.title_text = arcade.Text('Team Scores Editor', self.window.width // 2, self.window.height - 75, font_size=50, anchor_x="center")
+        self.title_text = arcade.Text('Edit Team Scores', self.window.width // 2, self.window.height - 75, font_size=50, anchor_x="center")
         
         self.team_texts = []
 
