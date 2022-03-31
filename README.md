@@ -4,7 +4,7 @@ A Jeopardy style game that can receive custom questions and responses.
 # Overview
 {Provide a description of your team project.  Describe how to use the software.}
 ## Game Window
-![Game Window]("pictures/main-window1.png")
+![Game Window](pictures/main-window1.png)
 
 <!-- NEW LINE (SPACE) -->
 &nbsp;
