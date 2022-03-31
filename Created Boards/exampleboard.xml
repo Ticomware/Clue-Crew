@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<board background="#031f60" foreground="#ffffff" pointcolor="#f9be10">
+<board background="" foreground="" pointcolor="">
     <category title="Technology">
         <question points="200">
             <title>Apple created the iPhone. ___ created Android.</title>
