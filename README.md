@@ -2,19 +2,14 @@
 A Jeopardy style game that can receive custom questions and responses.
 
 # Overview
-{Provide a description of your team project.  Describe how to use the software.}
 ## Game Window
 ![Game Window](pictures/main-window1.png)
 
-<!-- NEW LINE (SPACE) -->
-&nbsp;
 ### Starting a New Game
 `New Game` __Start a new game of Jeopardy__
 
-<p>1. Click on "New Game" and a new window will pop up. On the new window, select the desired board (.XML file).</p>
-<p align="center">
-    <img src="pictures/main-window2-1.png">
-</p>
+1. Click on "New Game" and a new window will pop up. On the new window, select the desired board (.XML file).
+![New Game](pictures/main-window2-1.png)
 
 <p>2. Select the desired number of teams.</p>
 <p align="center">
