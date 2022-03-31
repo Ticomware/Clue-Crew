@@ -4,9 +4,7 @@ A Jeopardy style game that can receive custom questions and responses.
 # Overview
 {Provide a description of your team project.  Describe how to use the software.}
 ## Game Window
-<p align="center">
-    <img src="pictures/main-window1.png">
-</p>
+![Game Window]("pictures/main-window1.png")
 
 <!-- NEW LINE (SPACE) -->
 &nbsp;
@@ -141,9 +139,6 @@ A Jeopardy style game that can receive custom questions and responses.
 {Make a list of websites that you found helpful in this project}
 * [Tkinter Documentation](https://docs.python.org/3/library/tk.html)
 * [Tkinter Tutorial](https://www.tutorialspoint.com/python3/python_gui_programming.htm)
-* [Web Site Name](http://url.link.goes.here)
-* [Web Site Name](http://url.link.goes.here)
-* [Web Site Name](http://url.link.goes.here)
 
 # Future Work
 
