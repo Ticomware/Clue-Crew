@@ -11,15 +11,11 @@ A Jeopardy style game that can receive custom questions and responses.
 1. Click on "New Game" and a new window will pop up. On the new window, select the desired board (.XML file).
 ![New Game](pictures/main-window2-1.png)
 
-<p>2. Select the desired number of teams.</p>
-<p align="center">
-    <img src="pictures/main-window3.png">
-</p>
+2. Select the desired number of teams.
+![Select Number Of Teams](pictures/main-window3.png)
 
-<p>3. Play the game! You are ready to play Jeopardy.</p>
-<p align="center">
-    <img src="pictures/main-window4.png">
-</p>
+3. Play the game! You are ready to play Jeopardy.
+![Begin Game](pictures/main-window4.png)
 
 <!-- NEW LINE (SPACE) -->
 &nbsp;
@@ -27,43 +23,30 @@ A Jeopardy style game that can receive custom questions and responses.
 ### Resuming an Existing Game
 `Load Game` __Continue playing a previously created game__
 
-<p>1. Click on "Load Game" and a new window will pop up. On the new window, select the desired board (.jpd file).</p>
-<p align="center">
-    <img src="pictures/main-window5-1.png">
-</p>
+1. Click on "Load Game" and a new window will pop up. On the new window, select the desired board (.jpd file).
+![Load Game](pictures/main-window5-1.png)
 
-<p>2. The board will load and you can continue playing!</p>
-<p align="center">
-    <img src="pictures/main-window6.png">
-</p>
+2. The board will load and you can continue playing!
+![Continue Game](pictures/main-window6.png)
 
 <!-- NEW LINE (SPACE) -->
 &nbsp;
 ## Board Editor
-<p align="center">
-    <img src="pictures/board-editor2-1.png">
-</p>
-
+![Board Editor](pictures/board-editor2-1.png)
 <!-- NEW LINE (SPACE) -->
 &nbsp;
 
 ### Creating a Board
 `Create New Board` __Create a custom board to play the game__
 
-<p>1. Click on "Create New Board"</p>
-<p align="center">
-    <img src="pictures/board-editor1-1.png">
-</p>
+1. Click on "Create New Board"
+![Create New Board](pictures/board-editor1-1.png)
 
-<p>2. Fill the entry boxes and click "Add Question" to add a new entry. Optionally, you can click Yes/No to double the amount of points for the current question.</p>
-<p align="center">
-    <img src="pictures/board-editor3.png">
-</p>
+2. Fill the entry boxes and click "Add Question" to add a new entry. Optionally, you can click Yes/No to double the amount of points for the current question.
+![Add Question](pictures/board-editor3.png)
 
-<p>3. When done adding question. Click on "Save" to save the board as a new file or replace an existing file. <b>MAKE SURE</b> to <b>INCLUDE .xml</b> at the end of the file name if you are creating a new file.</p>
-<p align="center">
-    <img src="pictures/board-editor3-2.png">
-</p>
+3. When done adding question. Click on "Save" to save the board as a new file or replace an existing file. __MAKE SURE__ to __INCLUDE .xml__ at the end of the file name if you are creating a new file.
+![Save Board](pictures/board-editor3-2.png)
 
 <!-- NEW LINE (SPACE) -->
 &nbsp;
@@ -71,73 +54,50 @@ A Jeopardy style game that can receive custom questions and responses.
 ### Editing a Board
 `Edit Existing Board` __Modify the values of an existing board__
 
-<p>The board editor has two modes for editing a board, the <b>Regular Editor</b> and the <b>Advanced Editor</b>. Click on "Edit Existing Board" to start. </p>
-<p align="center">
-    <img src="pictures/board-editor1-2.png">
-</p>
-<h3>Regular Editor</h3>
-<p>This is the default mode, to edit a board, click on "Load File", and select a board file (.XML file). After that, type a category in the category entry box and click "Search." If the category exists, the questions under that category will be displayed.</p>
-<p align="center">
-    <img src="pictures/board-editor4.png">
-</p>
-<p>When done making the desired changes, click on "Save" and the changes will be saved into the selected file.</p>
-<p align="center">
-    <img src="pictures/board-editor4-1.png">
-</p>
-<h3>Advanced Editor</h3>
-<p>Alternatively, you can use the advanced editor to visualize the entire file. To enter the advanced editor, click on the "Advanced Editor" button located on the bottom right of the regular editor.</p>
-<p align="center">
-    <img src="pictures/board-editor5.png">
-</p>
-<p>Similar to the regular editor, click on "Load File" and select the file you want to modify (.XML file). After making a selection, the contents of the file will be displayed and you can edit them. Optionally, you can resize the window to visualize the text better.</p>
-<p align="center">
-    <img src="pictures/board-editor6.png">
-</p>
-<p>When done making the desired changes, click on "Save" and a new window will pop up. You can save the file as a new file or overwrite an existing file. <b>MAKE SURE</b> to <b>INCLUDE .xml</b> at the end of the file name if you are creating a new file.</p>
-<p align="center">
-    <img src="pictures/board-editor7.png">
-</p>
+The board editor has two modes for editing a board, the __Regular Editor__ and the __Advanced Editor__. Click on "Edit Existing Board" to start.
+![Edit Existing Board](pictures/board-editor1-2.png)
+
+### Regular Editor
+This is the default mode, to edit a board, click on "Load File", and select a board file (.XML file). After that, type a category in the category entry box and click "Search." If the category exists, the questions under that category will be displayed.
+![Regular Board Editor](pictures/board-editor4.png)
+
+When done making the desired changes, click on "Save" and the changes will be saved into the selected file.
+![Save File Regular Board Editor](pictures/board-editor4-1.png)
+
+### Advanced Editor
+Alternatively, you can use the advanced editor to visualize the entire file. To enter the advanced editor, click on the "Advanced Editor" button located on the bottom right of the regular editor.
+![Advanced Board Editor](pictures/board-editor5.png)
+
+Similar to the regular editor, click on "Load File" and select the file you want to modify (.XML file). After making a selection, the contents of the file will be displayed and you can edit them. Optionally, you can resize the window to visualize the text better.
+![Edit XML](pictures/board-editor6.png)
+
+When done making the desired changes, click on "Save" and a new window will pop up. You can save the file as a new file or overwrite an existing file. __MAKE SURE__ to __INCLUDE .xml__ at the end of the file name if you are creating a new file.
+![Save File Advanced Board Editor](pictures/board-editor7.png)
 
 
 # Development Environment
-
-{Describe the tools that you used to develop the software}
-
-{Describe the programming language that you used and any libraries.}
-
 ### Tools to Develop Software
-<ul>
-    <li><a style="text-decoration: none; color: black;" href="#">Visual Studio Code</a></li>
-    <li><a style="text-decoration: none; color: black;" href="#">Microsoft Teams</a></li>
-    <li><a style="text-decoration: none; color: black;" href="#">GitHub and Git</a></li>
-    <li><a style="text-decoration: none; color: black;" href="#">something else?</a></li>
-</ul>
+* Visual Studio Code
+* Microsoft Teams
+* Git & GitHub
 
 ### Programming Language
-<ul>
-    <li><a style="text-decoration: none; color: black;" href="#">Python 3.0</a></li>
-    <li><a style="text-decoration: none; color: black;" href="#">Tkinter</a></li>
-    <li><a style="text-decoration: none; color: black;" href="#">Python Arcade</a></li>
-    <li><a style="text-decoration: none; color: black;" href="#">Something Else?</a></li>
-</ul>
+* Python 3.10.2
+* Tkinter
+* Arcade
 
 # Collaborators
-<ul>
-    <li><a style="text-decoration: none; color: black;" href="#">Corbyn Coffin</a></li>
-    <li><a style="text-decoration: none; color: black;" href="https://github.com/RodBuild">Rodrigo Rodriguez</a></li>
-    <li><a style="text-decoration: none; color: black;" href="#">CJ Bialorucki</a></li>
-    <li><a style="text-decoration: none; color: black;" href="#">Kyle Bunn</a></li>
-</ul>
+* [Rodrigo Rodriguez](https://github.com/RodBuild)
+* Kyle Bunn
+* CJ Bialorucki
+* Corbyn Coffin
 
 # Useful Websites
-
-{Make a list of websites that you found helpful in this project}
 * [Tkinter Documentation](https://docs.python.org/3/library/tk.html)
 * [Tkinter Tutorial](https://www.tutorialspoint.com/python3/python_gui_programming.htm)
+* [Arcade Documentation](https://api.arcade.academy/en/latest/arcade.html)
+* [Arcade Tutorials](https://api.arcade.academy/en/latest/examples/index.html#example-code) 
 
 # Future Work
-
-{Make a list of things that you need to fix, improve, and add in the future.}
-* Item 1
-* Item 2
-* Item 3
+* Implementation of additional Jeopardy aspects (Daily Double, Final Jeopardy, etc.)
+* Integration of existing Jeopardy question database
